@@ -80,7 +80,13 @@ nav a:visited {
           box-shadow: 0 0 5px var(--shadow-color);
 }
 
+#content .article h1 {
+  width: 100%;
+  text-align: center;
+}
+
 #content .article p {
+  width: 100%;
   text-align: center;
 }
 
