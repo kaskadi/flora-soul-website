@@ -11,11 +11,38 @@
              linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7));
 }
 
+@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white,  50%)) {
+  // For Google Chrome
+  &::-webkit-scrollbar {
+    width:  $size;
+    height: $size;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background: $foreground-color;
+    border-radius: $size;
+  }
+
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: $size;
+    background-color: $background-color;
+  }
+
+  // For Internet Explorer
+  & {
+    scrollbar-face-color: $foreground-color;
+    scrollbar-track-color: $background-color;
+  }
+}
+
 body, html {
   font-family: 'Poppins', sans-serif;
   color: var(--text-color);
   margin: 0;
   padding: 0;
+  @include scrollbars(10px, var(--bg-color), white);
 }
 
 .flex-col {
