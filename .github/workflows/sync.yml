@@ -1,0 +1,18 @@
+name: sync
+on:
+  push:
+    branches:
+      - 'master'
+      - 'release/**'
+      - 'dev'
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    if: github.repository != 'kaskadi/template-synced-repo'
+    steps:
+    - uses: actions/checkout@v2
+    - name: Synchronize repository
+      uses: kaskadi/action-remote-sync@master
+      env:
+        SYNC_API_ROOT: ${{ secrets.SYNC_API_ROOT }}
+        SYNC_API_AUTH_TOKEN: ${{ secrets.SYNC_API_AUTH_TOKEN }}
