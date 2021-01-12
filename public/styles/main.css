@@ -4,10 +4,10 @@
 }
 
 :root {
-  --bg-color: rgba(39, 116, 85, 0.4);
-  --text-color: #003A23;
-  --shadow-color: #0E573A;
-  --bg-mask: linear-gradient(rgb(255, 255, 255), rgba(255, 255, 255, 0), rgb(255, 255, 255)),
+  --bg-color: rgba(170, 132, 57, 0.4);
+  --text-color: #774F00;
+  --shadow-color: #916612;
+  --bg-mask: linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)),
              linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7));
 }
 
@@ -92,7 +92,7 @@ nav a:hover {
 }
 
 nav a:visited {
-  color: unset;
+  color: var(--text-color);
 }
 
 #content .article {
