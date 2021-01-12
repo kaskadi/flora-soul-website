@@ -70,6 +70,7 @@ nav {
     text-align: center;
     text-decoration: unset;
     transition: text-shadow 0.2s ease-out;
+    color: red;
     &:hover {
       text-shadow: 0.5px 0.7px 1px var(--shadow-color);
     }
