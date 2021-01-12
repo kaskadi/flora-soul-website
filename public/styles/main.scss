@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Poppins';
-  src: url('fonts/Poppins.ttf');
+  src: url('../fonts/Poppins.ttf');
 }
 
 :root {
@@ -76,13 +76,13 @@ nav {
     }
   }
   .article:nth-child(1) {
-    background-image: var(--bg-mask), url("./bg-1.jpg");
+    background-image: var(--bg-mask), url("../static/bg-1.jpg");
   }
   .article:nth-child(2) {
-    background-image: var(--bg-mask), url("./bg-2.jpg");
+    background-image: var(--bg-mask), url("../static/bg-2.jpg");
   }
   .article:nth-child(3) {
-    background-image: var(--bg-mask), url("./bg-3.jpg");
+    background-image: var(--bg-mask), url("../static/bg-3.jpg");
   }
 }
 
