@@ -85,7 +85,6 @@ nav a {
   text-decoration: unset;
   -webkit-transition: text-shadow 0.2s ease-out;
   transition: text-shadow 0.2s ease-out;
-  color: red;
 }
 
 nav a:hover {
