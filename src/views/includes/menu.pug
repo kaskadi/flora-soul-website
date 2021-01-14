@@ -1,6 +1,10 @@
 include mixins.pug
-ol
-  li
-    +homelink()
-  li
-    +aboutuslink()
+link(rel="stylesheet", href="styles/menu.css")
+nav
+  div#logo
+    +homeLink()
+  div#menu
+    +aboutLink()
+    +productsLink()
+    +blogLink()
+    +contactLink()

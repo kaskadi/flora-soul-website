@@ -1,8 +1,17 @@
 mixin link(url,title)
-  a(href=url)=title
+  a.link(href=url)= title
 
-mixin homelink()
+mixin homeLink()
   +link("index.html","Home")
   
-mixin aboutuslink()
-  +link("aboutus.html","About Us")
+mixin aboutLink()
+  +link("about.html","About us")
+
+mixin productsLink()
+  +link("index.html","Products")
+
+mixin blogLink()
+  +link("index.html","Blog")
+
+mixin contactLink()
+  +link("index.html","Contact us")

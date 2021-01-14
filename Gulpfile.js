@@ -1,18 +1,23 @@
-const { src, dest, parallel, watch} = require('gulp');
-const templating = require('gulp-pug');
+const { src, dest, parallel, watch } = require('gulp')
+const pug = require('gulp-pug')
+const less = require('gulp-less')
 
-function pug(){
+function renderTemplates () {
   return src('src/views/*.pug')
-  .pipe(templating({}))
-  .pipe(dest('build'))
+    .pipe(pug({}))
+    .pipe(dest('build'))
 }
 
-const runner = parallel(pug)
+function compileLess () {
+  return src('src/views/styles/**.less')
+    .pipe(less({}))
+    .pipe(dest('build/styles'))
+}
 
-exports.default = process.env.GULP_BUILD ?
-  // build for prod
-  runner :
-  // dev
-  function(){
-    watch(["src/views"], runner)
+const runner = parallel(renderTemplates, compileLess)
+
+exports.default = process.env.GULP_BUILD
+  ? runner // prod
+  : function () { // dev
+    watch(['src/views'], runner)
   }
