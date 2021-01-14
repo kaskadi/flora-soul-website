@@ -1,12 +1,18 @@
-const gulp = require('gulp');
+const { src, dest, parallel, watch} = require('gulp');
 const templating = require('gulp-pug');
 
 function pug(){
-  return gulp.src('src/views/*.pug')
+  return src('src/views/*.pug')
   .pipe(templating({}))
-  .pipe(gulp.dest('public'))
+  .pipe(dest('build'))
 }
 
-exports.default = function(){
-  gulp.watch(["src/views"],pug)
-}
+const runner = parallel(pug)
+
+exports.default = process.env.GULP_BUILD ?
+  // build for prod
+  runner :
+  // dev
+  function(){
+    watch(["src/views"], runner)
+  }
