@@ -1,7 +1,7 @@
-const { src, dest, parallel, watch} = require('gulp');
-const templating = require('gulp-pug');
+const { src, dest, parallel, watch } = require('gulp')
+const templating = require('gulp-pug')
 
-function pug(){
+function pug () {
   return src('src/views/*.pug')
     .pipe(templating({}))
     .pipe(dest('build'))
@@ -9,10 +9,8 @@ function pug(){
 
 const runner = parallel(pug)
 
-exports.default = process.env.GULP_BUILD ?
-  // prod
-  runner :
-  // dev
-  function(){
-    watch(["src/views"], runner)
+exports.default = process.env.GULP_BUILD
+  ? runner // prod
+  : function () { // dev
+    watch(['src/views'], runner)
   }
