@@ -1,0 +1,8 @@
+mixin link(url,title)
+  a(href=url)=title
+
+mixin homelink()
+  +link("index.html","Home")
+  
+mixin aboutuslink()
+  +link("aboutus.html","About Us")

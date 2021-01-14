@@ -1,0 +1,13 @@
+include mixins.pug
+html
+  head
+    title Florasoul -
+      block title
+  body
+    include menu.pug
+    block content
+    block foot
+      #footer
+        p
+          +homelink()
+          +aboutuslink()

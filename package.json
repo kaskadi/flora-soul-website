@@ -1,0 +1,25 @@
+{
+  "name": "flora-soul-website",
+  "version": "1.0.0",
+  "description": "[![Sync status](https://img.shields.io/github/workflow/status/kaskadi/flora-soul-website/sync?label=sync&logo=github)](https://github.com/kaskadi/flora-soul-website/actions?query=workflow%3Async)",
+  "main": "Gulpfile.js",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-pug": "^4.0.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gulp": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaskadi/flora-soul-website.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kaskadi/flora-soul-website/issues"
+  },
+  "homepage": "https://github.com/kaskadi/flora-soul-website#readme"
+}
