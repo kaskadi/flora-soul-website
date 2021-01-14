@@ -3,14 +3,14 @@ const templating = require('gulp-pug');
 
 function pug(){
   return src('src/views/*.pug')
-  .pipe(templating({}))
-  .pipe(dest('build'))
+    .pipe(templating({}))
+    .pipe(dest('build'))
 }
 
 const runner = parallel(pug)
 
 exports.default = process.env.GULP_BUILD ?
-  // build for prod
+  // prod
   runner :
   // dev
   function(){
