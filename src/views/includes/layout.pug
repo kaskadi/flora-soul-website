@@ -3,14 +3,10 @@ html
   head
     title Florasoul - 
       block title
+    link(rel="stylesheet", href="styles/reset.css")
     block styles
   body
     include menu.pug
     block content
     block foot
-      #footer
-        ol
-          li
-            +homelink()
-          li
-            +aboutlink()
+      include default-footer.pug
