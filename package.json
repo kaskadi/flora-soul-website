@@ -1,25 +1,29 @@
 {
   "name": "flora-soul-website",
   "version": "1.0.0",
-  "description": "[![Sync status](https://img.shields.io/github/workflow/status/kaskadi/flora-soul-website/sync?label=sync&logo=github)](https://github.com/kaskadi/flora-soul-website/actions?query=workflow%3Async)",
+  "description": "Flora-Soul website",
   "main": "Gulpfile.js",
-  "dependencies": {},
-  "devDependencies": {
-    "gulp": "^4.0.2",
-    "gulp-pug": "^4.0.1"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "gulp": "gulp"
+    "gulp": "gulp",
+    "build": "export GULP_BUILD=\"true\" && gulp"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kaskadi/flora-soul-website.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Klimapartner GmbH <kontakt@klimapartner.de> (https://klimapartner.de)",
+  "contributors": [
+    "Holger Will <h.will@klimapartner.de>",
+    "Alexis Lemaire <a.lemaire@klimapartner.de>"
+  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/kaskadi/flora-soul-website/issues"
   },
-  "homepage": "https://github.com/kaskadi/flora-soul-website#readme"
+  "homepage": "https://github.com/kaskadi/flora-soul-website#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-pug": "^4.0.1"
+  }
 }
