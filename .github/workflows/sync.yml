@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - 'master'
-      - 'release/**'
-      - 'dev'
 jobs:
   sync:
     runs-on: ubuntu-latest
