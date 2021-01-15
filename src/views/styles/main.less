@@ -10,14 +10,32 @@ body {
 
 footer {
   font-family: 'Open Sans Semibold';
-  #main-nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) 3fr;
+  grid-template-rows: auto 24px;
+  .nav {
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-between;
     align-items: flex-start;
+  }
+  #img {
     img {
       width: 150px;
     }
+  }
+  #logos {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+    align-items: flex-start;
+  }
+  #social-media {
+    grid-column-start: span 4;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
   }
 }
 
