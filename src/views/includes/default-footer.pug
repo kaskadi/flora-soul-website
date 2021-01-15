@@ -1,7 +1,30 @@
 footer
-  #main-nav
-    img(src="img/grow_together.png")
+  div#img.center
+    img(src="inline(footer-img.png)")
+  div#main-nav.nav
     +aboutLink()
     +productsLink()
+    +shopLink()
     +blogLink()
     +contactLink()
+  div#secondary-nav.nav
+    a.link(href="index.html") Reviews
+    a.link(href="index.html") Privacy Policy
+    a.link(href="index.html") Returns and Refund
+    a.link(href="index.html") Terms of Service
+  div#logos
+    img(src="inline(fs-logo.png)", width="120px")
+    img(src="inline(omri-logo.png)", width="120px")
+  div#social-media
+    div.logo
+      a.link(href="https://facebook.com")
+        include ../static/imgs/fb-logo.svg
+    div.logo
+      a.link(href="https://facebook.com")
+        include ../static/imgs/fb-logo-square.svg
+    div.logo
+      a.link(href="https://facebook.com")
+        include ../static/imgs/fb-logo-circle.svg
+    div.logo
+      a.link(href="https://instagram.com")
+        include ../static/imgs/instagram-logo.svg
