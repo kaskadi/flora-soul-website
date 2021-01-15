@@ -2,6 +2,7 @@ const { src, dest, watch, series } = require('gulp')
 const pug = require('gulp-pug')
 const less = require('gulp-less')
 const cleanCSS = require('gulp-clean-css')
+const clean = require('gulp-clean')
 
 function renderTemplates () {
   return src('src/views/*.pug')
@@ -21,7 +22,12 @@ function copyFonts () {
     .pipe(dest('build/fonts/'))
 }
 
-const runner = series(copyFonts, compileLess, renderTemplates)
+function cleanUp () {
+  return src('build', { read: false, allowEmpty: true })
+    .pipe(clean())
+}
+
+const runner = series(cleanUp, copyFonts, compileLess, renderTemplates)
 
 exports.default = process.env.GULP_BUILD
   ? runner // prod
