@@ -4,15 +4,16 @@ html
 head
 	title Florasoul -
 		block title
-	link(rel="stylesheet", href="styles/main.css")
+	style
+		include ../../../build/styles/main.css
 	block styles
 body
 	#page
 		include menu.pug
+		.hero
+			block hero
 		#content
-			.hero
-				block hero
 			block content
-		#footer
-			block foot
-				include default-footer.pug
+			#footer
+				block foot
+					include default-footer.pug
