@@ -1,9 +1,40 @@
 @import 'variables.less';
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa&display=swap');
+
+body, html {
+  margin: 0;
+  padding: 0;
+}
 
 .link {
   color: @link-color;
   text-decoration: none;
   &:visited {
     color: @link-color;
+  }
+}
+
+
+.button {
+  width: 170px;
+  font-size:15px;
+  font-weight:500;
+  border-radius: 50%;
+  background: #3D9645;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.btn {
+  cursor: pointer;
+  &.green{
+    fill: #3D9645;
+    .btntxt{
+      fill: white;
+      font-size:3.6;
+      font-weight: 600
+    }
   }
 }

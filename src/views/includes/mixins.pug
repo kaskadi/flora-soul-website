@@ -1,9 +1,16 @@
 mixin link(url,title)
-  a.link(href=url)= title
+  a.link(href=url)
+    if block
+        block
+    else
+      | #{title}
+
 
 mixin homeLink()
   +link("index.html","Home")
-  
+    if block
+      block
+
 mixin aboutLink()
   +link("about.html","About us")
 
@@ -15,3 +22,15 @@ mixin blogLink()
 
 mixin contactLink()
   +link("index.html","Contact us")
+
+
+mixin heroimage(img,txt,link_txt,link)
+  img(src=img)
+  .overlay
+    block
+
+mixin svgButton(x,y,w,h, txt, cls)
+  g(class="btn "+cls)
+    rect(x=x y=y width=w height=h rx= h/2)
+    text.btntxt(text-anchor="middle" style="dominant-baseline: middle" x=x+(w/2) y=y+(h/2)+0.5)
+      block

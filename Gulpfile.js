@@ -1,6 +1,7 @@
-const { src, dest, parallel, watch } = require('gulp')
+const { src, dest, parallel, watch, series } = require('gulp')
 const pug = require('gulp-pug')
 const less = require('gulp-less')
+const cleanCSS = require('gulp-clean-css');
 
 function renderTemplates () {
   return src('src/views/*.pug')
@@ -9,12 +10,13 @@ function renderTemplates () {
 }
 
 function compileLess () {
-  return src('src/views/styles/**.less')
+  return src('src/views/styles/main.less')
     .pipe(less({}))
+    .pipe(cleanCSS({}))
     .pipe(dest('build/styles'))
 }
 
-const runner = parallel(renderTemplates, compileLess)
+const runner = series(compileLess, renderTemplates)
 
 exports.default = process.env.GULP_BUILD
   ? runner // prod

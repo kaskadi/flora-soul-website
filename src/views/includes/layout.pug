@@ -1,13 +1,18 @@
+
 include mixins.pug
 html
-  head
-    title Florasoul - 
-      block title
-    link(rel="stylesheet", href="styles/reset.css")
-    link(rel="stylesheet", href="styles/globals.css")
-    block styles
-  body
-    include menu.pug
-    block content
-    block foot
-      include default-footer.pug
+head
+	title Florasoul -
+		block title
+	link(rel="stylesheet", href="styles/main.css")
+	block styles
+body
+	#page
+		include menu.pug
+		#content
+			.hero
+				block hero
+			block content
+		#footer
+			block foot
+				include default-footer.pug
