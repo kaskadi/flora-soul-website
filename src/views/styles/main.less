@@ -10,9 +10,10 @@ body {
 
 footer {
   @social-logo-size: 32px;
+  @img-size: 150px;
   font-family: 'Open Sans Semibold';
   display: grid;
-  grid-template-columns: 150px repeat(2, auto) 50%;
+  grid-template-columns: @img-size repeat(2, auto) 50%;
   grid-template-rows: auto calc(2 * @social-logo-size);
   .nav {
     display: flex;
@@ -22,7 +23,7 @@ footer {
   }
   #img {
     img {
-      width: 150px;
+      width: @img-size;
     }
   }
   #logos {
