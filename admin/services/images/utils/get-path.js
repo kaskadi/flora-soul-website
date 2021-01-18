@@ -1,3 +1,3 @@
-const path = require('path')
+const { join } = require('path')
 
-module.exports = (key = '') => path.join(process.env.ROOT, key)
+module.exports = (key = '') => join(process.env.ROOT, key)
