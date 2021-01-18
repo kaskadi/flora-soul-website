@@ -2,7 +2,7 @@ const { readdirSync, readFileSync, statSync } = require('fs')
 const { join, basename } = require('path')
 const { lookup } = require('mime-types')
 
-function getFiles (dir) {
+function getFiles (dir = process.cwd()) {
   return readdirSync(dir)
     .map(file => {
       const filePath = join(dir, file)
