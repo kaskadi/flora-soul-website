@@ -54,7 +54,7 @@ function getFiles (dir) {
             content: getFiles(filePath)
           }
         : {
-            name: filePath.replace(process.env.ROOT, ''),
+            name: path.basename(filePath),
             content: getContent(filePath)
           }
     })
