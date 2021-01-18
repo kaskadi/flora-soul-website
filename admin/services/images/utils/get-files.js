@@ -9,11 +9,11 @@ function getFiles (dir) {
       const stat = fs.statSync(filePath)
       return stat.isDirectory()
         ? {
-            name: file,
+            key: file,
             content: getFiles(filePath)
           }
         : {
-            name: path.basename(filePath),
+            key: path.basename(filePath),
             content: getContent(filePath)
           }
     })
