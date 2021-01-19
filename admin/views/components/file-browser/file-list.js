@@ -38,7 +38,7 @@ class FileList extends KaskadiElement {
       #file-viewer {
         display: flex;
         flex-flow: row wrap;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: flex-start;
       }
       .file {
@@ -51,6 +51,7 @@ class FileList extends KaskadiElement {
       .file:hover {
         cursor: pointer;
         user-select: none;
+        background: #DDD;
       }
     `
   }
