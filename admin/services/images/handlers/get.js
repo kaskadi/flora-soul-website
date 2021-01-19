@@ -1,30 +1,32 @@
-const { readdirSync, readFileSync, statSync } = require('fs')
-const { join, basename } = require('path')
+const { readdirSync, readFileSync, statSync, existsSync } = require('fs')
+const { join } = require('path')
 const { lookup } = require('mime-types')
 
 module.exports = (req, res) => {
-  res.json(getFiles())
+  const { path } = req.query
+  if (path && !existsSync(path)) {
+    res.status(404).send('No file found...')
+  } else {
+    res.json(getFiles(path))
+  }
 }
 
 function getFiles (dir = process.cwd()) {
   return readdirSync(dir)
     .map(file => {
       const filePath = join(dir, file)
-      const stat = statSync(filePath)
-      return stat.isDirectory()
+      return statSync(filePath).isDirectory()
         ? {
             key: file,
-            content: getFiles(filePath)
+            content: null
           }
         : {
-            key: basename(filePath),
+            key: file,
             content: getContent(filePath)
           }
     })
 }
 
 function getContent (file) {
-  const mimeType = lookup(file)
-  const content = readFileSync(file, 'base64')
-  return `data:${mimeType};base64,${content}`
+  return `data:${lookup(file)};base64,${readFileSync(file, 'base64')}`
 }
