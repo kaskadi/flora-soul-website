@@ -1,10 +1,20 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 
+function getFileNode (elem) {
+  if (Array.from(elem.classList).includes('file')) {
+    return elem
+  }
+  return elem.parentNode
+}
+
 class FileList extends KaskadiElement {
   constructor () {
     super()
     this.files = []
+    this._focus = null
+    this._clickCount = 0
+    this._clickTimeout = 500
   }
 
   static get properties () {
@@ -38,19 +48,38 @@ class FileList extends KaskadiElement {
     `
   }
 
-  focusHandler (e) {
-    const { target } = e
-    const parent = target.parentNode
-    const isFile = elem => Array.from(elem.classList).includes('file')
-    const setFocus = elem => {
-      this._focus = elem
+  clickHandler (e) {
+    this._clickCount++
+    if (this._clickCount === 1) {
+      this._focus = getFileNode(e.target)
+      this.fileSelect()
+      setTimeout(() => {
+        if (this._clickCount > 1) {
+          this.fileOpen()
+        }
+        this._clickCount = 0
+      }, this._clickTimeout)
     }
-    if (isFile(target)) {
-      setFocus(target)
-    } else if (parent && isFile(parent)) {
-      setFocus(parent)
-    } else {
-      setFocus(null)
+  }
+
+  fileSelect () {
+    const event = new CustomEvent('file-select', {
+      detail: {
+        file: this._focus
+      }
+    })
+    this.dispatchEvent(event)
+  }
+
+  fileOpen () {
+    const type = this._focus.getAttribute('data-file-type')
+    if (type === 'folder') {
+      const event = new CustomEvent('file-open', {
+        detail: {
+          key: this._focus.querySelector('div').textContent
+        }
+      })
+      this.dispatchEvent(event)
     }
   }
 
@@ -65,11 +94,13 @@ class FileList extends KaskadiElement {
   render () {
     return html`
       <div id="file-viewer">
-        ${this.files.map(file => html`
-        <div class="file" tabindex="-1" @click=${this.focusHandler} data-file-type=${file.content ? 'file' : 'folder'}>
-          <img src="${file.content || 'static/folder.svg'}" height="40">
-          <div>${file.key}</div>
-        </div>`)}
+        ${this.files
+          ? this.files.map(file => html`
+          <div class="file" tabindex="-1" @click=${this.clickHandler} data-file-type=${file.content ? 'file' : 'folder'}>
+            <img src="${file.content || 'static/folder.svg'}" height="40">
+            <div>${file.key}</div>
+          </div>`)
+          : html`<div>This destination does not exist</div>`}
       </div>
     `
   }
