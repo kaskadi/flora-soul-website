@@ -6,7 +6,7 @@ class FileBrowser extends KaskadiElement {
   static get styles () {
     return css`
       :host{
-        display: inline-block;
+        display: block;
       }
     `
   }
