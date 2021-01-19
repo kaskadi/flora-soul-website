@@ -52,7 +52,6 @@ class FileList extends KaskadiElement {
     } else {
       setFocus(null)
     }
-    console.log(this._focus)
   }
 
   firstUpdated (changedProperties) {
