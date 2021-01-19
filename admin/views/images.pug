@@ -1,0 +1,14 @@
+extends includes/layout.pug
+
+block scripts
+  script(type="module", src="components/file-browser/file-browser.js")
+
+block content
+  a(href="/") Home
+  fs-file-browser
+  div(style="display: flex; flex-flow: column nowrap; justify-content: space-between; align-items: flex-start;")
+    label(for="img-picker") Choose a picture to upload
+    input(type="file", id="img-picker", name="img-picker")
+    img(id="thumbnail", height="200")
+  button(id="upload-button") Upload
+  script(src="scripts/main.js")
