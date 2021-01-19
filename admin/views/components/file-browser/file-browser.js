@@ -19,8 +19,12 @@ class FileBrowser extends KaskadiElement {
     `
   }
 
+  appendPath (suffix) {
+    return this._path.length > 0 ? `${this._path}/${suffix}` : suffix
+  }
+
   fetchApi (init, url = apiUrl) {
-    fetch(url, init)
+    return fetch(url, init)
       .then(() => {
         this.naviguate(this._path)
       })
@@ -36,12 +40,24 @@ class FileBrowser extends KaskadiElement {
     }
   }
 
+  naviguate (path) {
+    return fetch(`${apiUrl}?path=${path}`)
+      .then(async res => {
+        const { status } = res
+        if (status === 404) {
+          this.shadowRoot.querySelector('fs-file-list').files = null
+        } else if (status === 200) {
+          this.shadowRoot.querySelector('fs-file-list').files = await res.json()
+        }
+      })
+  }
+
   selectHandler (e) {
     this._selectedFile = e.detail.file
   }
 
   openHandler (e) {
-    this._path = e.detail.key
+    this._path = this.appendPath(e.detail.key)
     this.naviguate(this._path)
   }
 
@@ -50,10 +66,10 @@ class FileBrowser extends KaskadiElement {
     filePicker.click()
     const filePickHandler = function (e) {
       const file = e.target.files[0]
-      const key = file.name
       if (!file) {
         return
       }
+      const key = this.appendPath(file.name)
       const reader = new window.FileReader()
       const loadHandler = function () {
         // convert image file to base64 string
@@ -68,26 +84,28 @@ class FileBrowser extends KaskadiElement {
   }
 
   deleteHandler () {
-    const init = this.getInit('DELETE', { key: this._selectedFile.key })
+    const key = this.appendPath(this._selectedFile.key)
+    const init = this.getInit('DELETE', { key })
     this.fetchApi(init)
   }
 
   renameHandler () {
-    const key = window.prompt('New file name')
-    const init = this.getInit('PATCH', { oldKey: this._selectedFile.key, key })
+    let key = window.prompt('New file name')
+    if (!key) {
+      return
+    }
+    key = this.appendPath(key)
+    const oldKey = this.appendPath(this._selectedFile.key)
+    const init = this.getInit('PATCH', { oldKey, key })
     this.fetchApi(init)
   }
 
-  naviguate (path) {
-    fetch(`${apiUrl}?path=${path}`)
-      .then(async res => {
-        const { status } = res
-        if (status === 404) {
-          this.shadowRoot.querySelector('fs-file-list').files = null
-        } else if (status === 200) {
-          this.shadowRoot.querySelector('fs-file-list').files = await res.json()
-        }
-      })
+  newFolderHandler () {
+    const name = window.prompt('Folder name')
+    if (!name) {
+      return
+    }
+    this.fetchApi(this.getInit('PUT', { key: this.appendPath(this._path, name) }))
   }
 
   render () {
@@ -97,6 +115,7 @@ class FileBrowser extends KaskadiElement {
         <div id="controls">
           <button @click="${this.uploadHandler}">Upload</button>
           <input id="file-picker" type="file" hidden>
+          <button @click="${this.newFolderHandler}">New folder</button>
           <button @click="${this.deleteHandler}">Delete</button>
           <button @click="${this.renameHandler}">Rename</button>
         </div>
