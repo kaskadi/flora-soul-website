@@ -12,6 +12,9 @@ module.exports = (req, res) => {
 }
 
 function getFiles (dir = process.cwd()) {
+  if (dir.length === 0) {
+    dir = process.cwd()
+  }
   return readdirSync(dir)
     .map(file => {
       const filePath = join(dir, file)
