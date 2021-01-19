@@ -1,2 +1,9 @@
-body
-  h1 Hello
+extends layout.pug
+
+block content
+  div(style="display: flex; flex-flow: column nowrap; justify-content: space-between; align-items: flex-start;")
+    label(for="img-picker") Choose a picture to upload
+    input(type="file", id="img-picker", name="img-picker")
+    img(id="thumbnail", height="200")
+  button(id="upload-button") Upload
+  script(src="scripts/main.js")
