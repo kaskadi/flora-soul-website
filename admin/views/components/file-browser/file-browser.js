@@ -11,14 +11,6 @@ class FileBrowser extends KaskadiElement {
     this._path = ''
   }
 
-  static get styles () {
-    return css`
-      :host{
-        display: block;
-      }
-    `
-  }
-
   appendPath (suffix) {
     return this._path.length > 0 ? `${this._path}/${suffix}` : suffix
   }
@@ -26,7 +18,7 @@ class FileBrowser extends KaskadiElement {
   fetchApi (init, url = apiUrl) {
     return fetch(url, init)
       .then(() => {
-        this.naviguate(this._path)
+        this.navigate(this._path)
       })
   }
 
@@ -40,7 +32,7 @@ class FileBrowser extends KaskadiElement {
     }
   }
 
-  naviguate (path) {
+  navigate (path) {
     return fetch(`${apiUrl}?path=${path}`)
       .then(async res => {
         const { status } = res
@@ -50,6 +42,11 @@ class FileBrowser extends KaskadiElement {
           this.shadowRoot.querySelector('fs-file-list').files = await res.json()
         }
       })
+      .then(() => {
+        // reset focus and selected file to avoid strange behaviors
+        document.activeElement.blur()
+        this._selectedFile = null
+      })
   }
 
   selectHandler (e) {
@@ -58,7 +55,7 @@ class FileBrowser extends KaskadiElement {
 
   openHandler (e) {
     this._path = this.appendPath(e.detail.key)
-    this.naviguate(this._path)
+    this.navigate(this._path)
   }
 
   uploadHandler () {
@@ -84,12 +81,20 @@ class FileBrowser extends KaskadiElement {
   }
 
   deleteHandler () {
+    if (!this._selectedFile) {
+      window.alert('Please select a file to delete first')
+      return
+    }
     const key = this.appendPath(this._selectedFile.key)
     const init = this.getInit('DELETE', { key })
     this.fetchApi(init)
   }
 
   renameHandler () {
+    if (!this._selectedFile) {
+      window.alert('Please select a file to rename first')
+      return
+    }
     let key = window.prompt('New file name')
     if (!key) {
       return
@@ -106,6 +111,33 @@ class FileBrowser extends KaskadiElement {
       return
     }
     this.fetchApi(this.getInit('PUT', { key: this.appendPath(this._path, name) }))
+  }
+
+  static get styles () {
+    return css`
+      :host{
+        display: block;
+      }
+      #browser {
+        width: 100%;
+        border: 1px solid black;
+      }
+      #browser fs-file-list {
+        width: 100%;
+        height: 500px;
+        overflow-y: auto;
+      }
+      #controls {
+        width: 100%;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-items: center;
+        border-top: 1px solid black;
+        padding: 10px 0;
+        background: #DDD;
+      }
+    `
   }
 
   render () {
