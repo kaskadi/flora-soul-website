@@ -10,5 +10,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Admin page hosted at http://localhost:${port}`)
+  console.log(`Admin page hosted at http://localhost:${port}. Don't forget to start all related APIs!`)
 })
