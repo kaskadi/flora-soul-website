@@ -1,11 +1,18 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 
-function getFileNode (elem) {
-  if (Array.from(elem.classList).includes('file')) {
-    return elem
+function getFile (elem) {
+  const getData = elem => {
+    const src = elem.querySelector('img').src
+    return {
+      key: elem.querySelector('div').textContent,
+      content: src.startsWith('data:') ? src : null
+    }
   }
-  return elem.parentNode
+  if (Array.from(elem.classList).includes('file')) {
+    return getData(elem)
+  }
+  return getData(elem.parentNode)
 }
 
 class FileList extends KaskadiElement {
@@ -51,7 +58,7 @@ class FileList extends KaskadiElement {
   clickHandler (e) {
     this._clickCount++
     if (this._clickCount === 1) {
-      this._focus = getFileNode(e.target)
+      this._focus = getFile(e.target)
       this.fileSelect()
       setTimeout(() => {
         if (this._clickCount > 1) {
@@ -72,11 +79,10 @@ class FileList extends KaskadiElement {
   }
 
   fileOpen () {
-    const type = this._focus.getAttribute('data-file-type')
-    if (type === 'folder') {
+    if (!this._focus.content) {
       const event = new CustomEvent('file-open', {
         detail: {
-          key: this._focus.querySelector('div').textContent
+          key: this._focus.key
         }
       })
       this.dispatchEvent(event)
