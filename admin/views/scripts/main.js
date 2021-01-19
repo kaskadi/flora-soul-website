@@ -19,10 +19,12 @@ imgPicker.addEventListener('change', e => {
 })
 
 uploadButton.addEventListener('click', e => {
-  const { key, content } = getData()
   const init = {
     method: 'PUT',
-    body: JSON.stringify({ key, content })
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(getData())
   }
   window.fetch('http://localhost:3101', init)
 })
@@ -35,6 +37,6 @@ function storeData ({ key, content }) {
 function getData () {
   return {
     key: thumbnail['data-key'],
-    content: thumbnail.src
+    content: thumbnail.getAttribute('src')
   }
 }
