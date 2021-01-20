@@ -74,7 +74,6 @@ class FileBrowser extends KaskadiElement {
       this.navigate(this.path)
     } else {
       window.open(`${apiUrl}/download?key=${filePath}`)
-      // fetch(`${apiUrl}/download?key=${filePath}`)
     }
   }
 
@@ -101,19 +100,11 @@ class FileBrowser extends KaskadiElement {
   }
 
   deleteHandler () {
-    if (!this.selectedFile) {
-      window.alert('Please select a file to delete first')
-      return
-    }
     const key = this.appendPath(this.selectedFile.key)
     this.fetchApi(this.getInit('DELETE', { key }))
   }
 
   renameHandler () {
-    if (!this.selectedFile) {
-      window.alert('Please select a file to rename first')
-      return
-    }
     let key = window.prompt('New file name')
     if (!key) {
       return
