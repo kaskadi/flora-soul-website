@@ -70,23 +70,35 @@ class FileList extends KaskadiElement {
     this.dispatchEvent(event)
   }
 
-  unselectFile (e) {
+  unselectFile () {
+    if (this.focus) {
+      this.focus.blur()
+    }
+    this.focus = null
+  }
+
+  unselectFileKey (e) {
     if (e.key === 'Escape') {
-      if (this.focus) {
-        this.focus.blur()
-      }
-      this.focus = null
+      this.unselectFile()
+    }
+  }
+
+  unselectFileClick (e) {
+    if (!e.path.some(elem => elem.classList && elem.classList.contains('file'))) {
+      this.unselectFile()
     }
   }
 
   connectedCallback () {
     super.connectedCallback()
-    window.addEventListener('keydown', this.unselectFile.bind(this))
+    window.addEventListener('keydown', this.unselectFileKey.bind(this))
+    this.addEventListener('click', this.unselectFileClick.bind(this))
   }
 
   disconnectedCallback () {
     super.disconnectedCallback()
-    window.removeEventListener('keydown', this.unselectFile)
+    window.removeEventListener('keydown', this.unselectFileKey)
+    this.removeEventListener('click', this.unselectFileClick)
   }
 
   firstUpdated (changedProperties) {
