@@ -60,12 +60,7 @@ class FileList extends KaskadiElement {
   }
 
   fileFocus (e) {
-    const target = e.path[0]
-    this.focus = target
-    const event = new CustomEvent('file-select', {
-      detail: getData(target)
-    })
-    this.dispatchEvent(event)
+    this.focus = e.path[0]
   }
 
   fileOpen (e) {
@@ -73,6 +68,25 @@ class FileList extends KaskadiElement {
       detail: getData(e.path[1])
     })
     this.dispatchEvent(event)
+  }
+
+  unselectFile (e) {
+    if (e.key === 'Escape') {
+      if (this.focus) {
+        this.focus.blur()
+      }
+      this.focus = null
+    }
+  }
+
+  connectedCallback () {
+    super.connectedCallback()
+    window.addEventListener('keydown', this.unselectFile.bind(this))
+  }
+
+  disconnectedCallback () {
+    super.disconnectedCallback()
+    window.removeEventListener('keydown', this.unselectFile)
   }
 
   firstUpdated (changedProperties) {
@@ -86,8 +100,13 @@ class FileList extends KaskadiElement {
   updated (changedProperties) {
     if (changedProperties.has('focus')) {
       const oldFocus = changedProperties.get('focus')
-      if (this.focus) {
-        this.focus.classList.add('selected')
+      const { focus } = this
+      const event = new CustomEvent('file-select', {
+        detail: focus ? getData(focus) : null
+      })
+      this.dispatchEvent(event)
+      if (focus) {
+        focus.classList.add('selected')
       }
       if (oldFocus) {
         oldFocus.classList.remove('selected')

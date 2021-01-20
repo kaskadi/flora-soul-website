@@ -56,8 +56,7 @@ class FileBrowser extends KaskadiElement {
         }
       })
       .then(() => {
-        // reset focus and selected file to avoid strange behaviors
-        this.selectedFile = null
+        // reset focus
         this.shadowRoot.querySelector('fs-file-list').focus = null
       })
   }
