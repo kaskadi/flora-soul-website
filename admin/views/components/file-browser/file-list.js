@@ -13,11 +13,16 @@ class FileList extends KaskadiElement {
   constructor () {
     super()
     this.files = []
+    this.focus = null
   }
 
   static get properties () {
     return {
-      files: { type: Array }
+      files: { type: Array },
+      focus: {
+        type: Object,
+        attribute: false
+      }
     }
   }
 
@@ -37,25 +42,33 @@ class FileList extends KaskadiElement {
         flex-flow: column nowrap;
         justify-content: center;
         align-items: center;
-        margin: 5px 10px;
+        margin: 5px 5px;
+        padding: 5px;
       }
       .file:hover {
         cursor: pointer;
         user-select: none;
         background: #DDD;
       }
+      .file:focus {
+        outline: none;
+      }
+      .selected {
+        background: #DDD;
+      }
     `
   }
 
-  fileSelect (e) {
+  fileFocus (e) {
+    const target = e.path[0]
+    this.focus = target
     const event = new CustomEvent('file-select', {
-      detail: getData(e.path[0])
+      detail: getData(target)
     })
     this.dispatchEvent(event)
   }
 
   fileOpen (e) {
-    console.log(e)
     const event = new CustomEvent('file-open', {
       detail: getData(e.path[1])
     })
@@ -70,12 +83,22 @@ class FileList extends KaskadiElement {
       })
   }
 
+  updated (changedProperties) {
+    // if we reset focus
+    if (changedProperties.has('focus')) {
+      if (this.focus) {
+        this.focus.classList.add('selected')
+      }
+      changedProperties.get('focus').classList.remove('selected')
+    }
+  }
+
   render () {
     return html`
       <div id="file-viewer">
         ${this.files
           ? this.files.map(file => html`
-          <div class="file" tabindex="-1" @focus=${this.fileSelect} @dblclick="${this.fileOpen}">
+          <div class="file" tabindex="-1" @focus=${this.fileFocus} @dblclick="${this.fileOpen}">
             <img src="${file.content || 'static/folder.svg'}" height="40">
             <div>${file.key}</div>
           </div>`)
