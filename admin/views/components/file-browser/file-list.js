@@ -84,12 +84,14 @@ class FileList extends KaskadiElement {
   }
 
   updated (changedProperties) {
-    // if we reset focus
     if (changedProperties.has('focus')) {
+      const oldFocus = changedProperties.get('focus')
       if (this.focus) {
         this.focus.classList.add('selected')
       }
-      changedProperties.get('focus').classList.remove('selected')
+      if (oldFocus) {
+        oldFocus.classList.remove('selected')
+      }
     }
   }
 
