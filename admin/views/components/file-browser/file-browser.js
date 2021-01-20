@@ -7,18 +7,31 @@ const apiUrl = 'http://localhost:3101'
 class FileBrowser extends KaskadiElement {
   constructor () {
     super()
-    this._selectedFile = null
-    this._path = ''
+    this.selectedFile = null
+    this.path = ''
+  }
+
+  static get properties () {
+    return {
+      selectedFile: {
+        type: Object,
+        attribute: false
+      },
+      path: {
+        type: String,
+        attribute: false
+      }
+    }
   }
 
   appendPath (suffix) {
-    return this._path.length > 0 ? `${this._path}/${suffix}` : suffix
+    return this.path.length > 0 ? `${this.path}/${suffix}` : suffix
   }
 
   fetchApi (init, url = apiUrl) {
     return fetch(url, init)
       .then(() => {
-        this.navigate(this._path)
+        this.navigate(this.path)
       })
   }
 
@@ -44,18 +57,18 @@ class FileBrowser extends KaskadiElement {
       })
       .then(() => {
         // reset focus and selected file to avoid strange behaviors
-        document.activeElement.blur()
-        this._selectedFile = null
+        this.selectedFile = null
+        this.shadowRoot.querySelector('fs-file-list').focus = null
       })
   }
 
   selectHandler (e) {
-    this._selectedFile = e.detail.file
+    this.selectedFile = e.detail
   }
 
   openHandler (e) {
-    this._path = this.appendPath(e.detail.key)
-    this.navigate(this._path)
+    this.path = this.appendPath(e.detail.key)
+    this.navigate(this.path)
   }
 
   uploadHandler () {
@@ -81,17 +94,17 @@ class FileBrowser extends KaskadiElement {
   }
 
   deleteHandler () {
-    if (!this._selectedFile) {
+    if (!this.selectedFile) {
       window.alert('Please select a file to delete first')
       return
     }
-    const key = this.appendPath(this._selectedFile.key)
+    const key = this.appendPath(this.selectedFile.key)
     const init = this.getInit('DELETE', { key })
     this.fetchApi(init)
   }
 
   renameHandler () {
-    if (!this._selectedFile) {
+    if (!this.selectedFile) {
       window.alert('Please select a file to rename first')
       return
     }
@@ -100,7 +113,7 @@ class FileBrowser extends KaskadiElement {
       return
     }
     key = this.appendPath(key)
-    const oldKey = this.appendPath(this._selectedFile.key)
+    const oldKey = this.appendPath(this.selectedFile.key)
     const init = this.getInit('PATCH', { oldKey, key })
     this.fetchApi(init)
   }
@@ -148,8 +161,8 @@ class FileBrowser extends KaskadiElement {
           <button @click="${this.uploadHandler}">Upload</button>
           <input id="file-picker" type="file" hidden>
           <button @click="${this.newFolderHandler}">New folder</button>
-          <button @click="${this.deleteHandler}">Delete</button>
-          <button @click="${this.renameHandler}">Rename</button>
+          <button @click="${this.deleteHandler}" ?disabled="${!this.selectedFile}">Delete</button>
+          <button @click="${this.renameHandler}" ?disabled="${!this.selectedFile}">Rename</button>
         </div>
       </div>
     `
