@@ -66,9 +66,16 @@ class FileBrowser extends KaskadiElement {
     this.selectedFile = e.detail
   }
 
-  openHandler (e) {
-    this.path = this.appendPath(e.detail.key)
-    this.navigate(this.path)
+  openHandler () {
+    const { content, key } = this.selectedFile
+    const filePath = this.appendPath(key)
+    if (!content) {
+      this.path = filePath
+      this.navigate(this.path)
+    } else {
+      window.open(`${apiUrl}/download?key=${filePath}`)
+      // fetch(`${apiUrl}/download?key=${filePath}`)
+    }
   }
 
   uploadHandler () {
@@ -99,8 +106,7 @@ class FileBrowser extends KaskadiElement {
       return
     }
     const key = this.appendPath(this.selectedFile.key)
-    const init = this.getInit('DELETE', { key })
-    this.fetchApi(init)
+    this.fetchApi(this.getInit('DELETE', { key }))
   }
 
   renameHandler () {
@@ -114,8 +120,7 @@ class FileBrowser extends KaskadiElement {
     }
     key = this.appendPath(key)
     const oldKey = this.appendPath(this.selectedFile.key)
-    const init = this.getInit('PATCH', { oldKey, key })
-    this.fetchApi(init)
+    this.fetchApi(this.getInit('PATCH', { oldKey, key }))
   }
 
   newFolderHandler () {
