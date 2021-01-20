@@ -1,27 +1,18 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 
-function getFile (elem) {
-  const getData = elem => {
-    const src = elem.querySelector('img').src
-    return {
-      key: elem.querySelector('div').textContent,
-      content: src.startsWith('data:') ? src : null
-    }
+function getData (file) {
+  const src = file.querySelector('img').src
+  return {
+    key: file.querySelector('div').textContent,
+    content: src.startsWith('data:') ? src : null
   }
-  if (Array.from(elem.classList).includes('file')) {
-    return getData(elem)
-  }
-  return getData(elem.parentNode)
 }
 
 class FileList extends KaskadiElement {
   constructor () {
     super()
     this.files = []
-    this._focus = null
-    this._clickCount = 0
-    this._clickTimeout = 500
   }
 
   static get properties () {
@@ -56,38 +47,19 @@ class FileList extends KaskadiElement {
     `
   }
 
-  clickHandler (e) {
-    this._clickCount++
-    if (this._clickCount === 1) {
-      this._focus = getFile(e.target)
-      this.fileSelect()
-      setTimeout(() => {
-        if (this._clickCount > 1) {
-          this.fileOpen()
-        }
-        this._clickCount = 0
-      }, this._clickTimeout)
-    }
-  }
-
-  fileSelect () {
+  fileSelect (e) {
     const event = new CustomEvent('file-select', {
-      detail: {
-        file: this._focus
-      }
+      detail: getData(e.path[0])
     })
     this.dispatchEvent(event)
   }
 
-  fileOpen () {
-    if (!this._focus.content) {
-      const event = new CustomEvent('file-open', {
-        detail: {
-          key: this._focus.key
-        }
-      })
-      this.dispatchEvent(event)
-    }
+  fileOpen (e) {
+    console.log(e)
+    const event = new CustomEvent('file-open', {
+      detail: getData(e.path[1])
+    })
+    this.dispatchEvent(event)
   }
 
   firstUpdated (changedProperties) {
@@ -103,7 +75,7 @@ class FileList extends KaskadiElement {
       <div id="file-viewer">
         ${this.files
           ? this.files.map(file => html`
-          <div class="file" tabindex="-1" @click=${this.clickHandler} data-file-type=${file.content ? 'file' : 'folder'}>
+          <div class="file" tabindex="-1" @focus=${this.fileSelect} @dblclick="${this.fileOpen}">
             <img src="${file.content || 'static/folder.svg'}" height="40">
             <div>${file.key}</div>
           </div>`)
