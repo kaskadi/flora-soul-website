@@ -17,6 +17,7 @@ app.get('/', require('./handlers/get.js'))
 app.put('/', require('./handlers/put.js'))
 app.delete('/', require('./handlers/delete.js'))
 app.patch('/', require('./handlers/patch.js'))
+app.get('/download', require('./handlers/download.js'))
 
 app.use((req, res, next) => {
   process.chdir(__dirname)
