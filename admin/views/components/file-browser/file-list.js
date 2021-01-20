@@ -101,14 +101,6 @@ class FileList extends KaskadiElement {
     this.removeEventListener('click', this.unselectFileClick)
   }
 
-  firstUpdated (changedProperties) {
-    fetch('http://localhost:3101')
-      .then(res => res.json())
-      .then(files => {
-        this.files = files
-      })
-  }
-
   updated (changedProperties) {
     if (changedProperties.has('focus')) {
       const oldFocus = changedProperties.get('focus')
