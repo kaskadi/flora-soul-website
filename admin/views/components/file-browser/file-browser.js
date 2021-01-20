@@ -100,8 +100,12 @@ class FileBrowser extends KaskadiElement {
   }
 
   deleteHandler () {
-    const key = this.appendPath(this.selectedFile.key)
-    this.fetchApi(this.getInit('DELETE', { key }))
+    const key = this.selectedFile.key
+    if (!window.confirm(`Do you really want to delete ${key}?`)) {
+      return
+    }
+    const filePath = this.appendPath(key)
+    this.fetchApi(this.getInit('DELETE', { key: filePath }))
   }
 
   renameHandler () {
