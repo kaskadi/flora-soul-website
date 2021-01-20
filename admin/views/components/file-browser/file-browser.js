@@ -48,6 +48,8 @@ class FileBrowser extends KaskadiElement {
   navigate (path) {
     return fetch(`${apiUrl}?path=${path}`)
       .then(async res => {
+        // reset focus
+        this.shadowRoot.querySelector('fs-file-list').focus = null
         const { status } = res
         if (status === 404) {
           this.shadowRoot.querySelector('fs-file-list').files = null
@@ -55,18 +57,14 @@ class FileBrowser extends KaskadiElement {
           this.shadowRoot.querySelector('fs-file-list').files = await res.json()
         }
       })
-      .then(() => {
-        // reset focus
-        this.shadowRoot.querySelector('fs-file-list').focus = null
-      })
   }
 
   selectHandler (e) {
     this.selectedFile = e.detail
   }
 
-  openHandler () {
-    const { content, key } = this.selectedFile
+  openHandler (e) {
+    const { content, key } = e.detail
     const filePath = this.appendPath(key)
     if (!content) {
       this.path = filePath
