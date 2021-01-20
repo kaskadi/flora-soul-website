@@ -110,7 +110,7 @@ class FileBrowser extends KaskadiElement {
     if (!name) {
       return
     }
-    this.fetchApi(this.getInit('PUT', { key: this.appendPath(this._path, name) }))
+    this.fetchApi(this.getInit('PUT', { key: this.appendPath(name) }))
   }
 
   static get styles () {
