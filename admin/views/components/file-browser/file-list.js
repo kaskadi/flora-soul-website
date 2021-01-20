@@ -44,10 +44,10 @@ class FileList extends KaskadiElement {
         align-items: center;
         margin: 5px 5px;
         padding: 5px;
+        user-select: none;
       }
       .file:hover {
         cursor: pointer;
-        user-select: none;
         background: #DDD;
       }
       .file:focus {

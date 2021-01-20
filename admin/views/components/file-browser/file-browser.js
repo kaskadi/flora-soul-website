@@ -129,6 +129,7 @@ class FileBrowser extends KaskadiElement {
     return css`
       :host{
         display: block;
+        user-select: none;
       }
       #browser {
         width: 100%;
@@ -148,6 +149,9 @@ class FileBrowser extends KaskadiElement {
         border-top: 1px solid black;
         padding: 10px 0;
         background: #DDD;
+      }
+      #controls button:not([disabled]):hover {
+        cursor: pointer;
       }
     `
   }
