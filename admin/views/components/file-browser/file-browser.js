@@ -25,7 +25,8 @@ class FileBrowser extends KaskadiElement {
   }
 
   appendPath (suffix) {
-    return this.path.length > 0 ? `${this.path}/${suffix}` : suffix
+    const path = this.path.length > 0 ? `${this.path}/${suffix}` : suffix
+    return path.replace(/%20/g, '') // handle case when for some reason there are backspaces...
   }
 
   fetchApi (init, url = apiUrl) {
@@ -68,7 +69,6 @@ class FileBrowser extends KaskadiElement {
     const filePath = this.appendPath(key)
     if (!content) {
       this.path = filePath
-      this.navigate(this.path)
     } else {
       window.open(`${apiUrl}/download?key=${filePath}`)
     }
@@ -123,6 +123,12 @@ class FileBrowser extends KaskadiElement {
     this.fetchApi(this.getInit('PUT', { key: this.appendPath(name) }))
   }
 
+  updated (changedProperties) {
+    if (changedProperties.has('path')) {
+      this.navigate(this.path)
+    }
+  }
+
   static get styles () {
     return css`
       :host{
@@ -151,12 +157,37 @@ class FileBrowser extends KaskadiElement {
       #controls button:not([disabled]):hover {
         cursor: pointer;
       }
+      nav {
+        border-bottom: 1px solid black;
+        padding: 5px;
+      }
+      nav div {
+        display: inline-block;
+      }
+      .path-part:hover {
+        cursor: pointer;
+        background: #DDD;
+      }
+      .bold {
+        font-weight: bold;
+      }
     `
   }
 
   render () {
+    const pathParts = this.path.split('/').filter(part => part.length > 0)
+    const createNavPart = (part, i, isBold) => html`
+      <div>></div>
+      <div class="path-part ${isBold ? 'bold' : ''}" data-index="${i}" @click="${(e) => { this.path = pathParts.slice(0, Number(e.path[0].getAttribute('data-index'))).join('/') }}">${part}</div>
+    `
     return html`
       <div id="browser">
+        <nav>
+          ${createNavPart('Root', 0, pathParts.length === 0)}
+          ${pathParts.map((part, i) => html`
+            ${createNavPart(part, i + 1, i === pathParts.length - 1)}
+          `)}
+        </nav>
         <fs-file-list @file-select="${this.selectHandler}" @file-open="${this.openHandler}"></fs-file-list>
         <div id="controls">
           <button @click="${this.uploadHandler}">Upload</button>
