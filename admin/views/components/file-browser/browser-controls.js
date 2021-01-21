@@ -32,7 +32,10 @@ function checkMimeSignature (header) {
     'image/tiff': ['492049', '49492a00', '4d4d002a', '4d4d002b'],
     'image/webp': ['52494646', '57454250']
   }
-  const compareSig = header => sig => !header.split('').some((char, i) => char !== sig[i])
+  const compareSig = header => sig => {
+    const chars = header.split('').slice(0, sig.length) // we get characters from header and match to the signature length for checking
+    return !chars.some((char, i) => char !== sig[i])
+  }
   for (const mime in signatures) {
     if (signatures[mime].some(compareSig(header))) {
       return mime
