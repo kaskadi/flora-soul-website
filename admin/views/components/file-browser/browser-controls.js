@@ -13,6 +13,15 @@ function bytesToBase64 (bytes) {
   return window.btoa(binary)
 }
 
+function isSvg (bytes) {
+  let binary = ''
+  const len = bytes.byteLength
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  return binary.startsWith('<svg')
+}
+
 function checkMimeSignature (header) {
   const signatures = {
     'image/bmp': ['424d'],
@@ -101,11 +110,11 @@ class BrowserControls extends KaskadiElement {
     const loadHandler = function () {
       const key = appendPath(this.path, file.name)
       const bytes = new Uint8Array(reader.result)
-      if (!acceptedMimes.includes(getMime(bytes))) {
-        window.alert('Only images are allowed for upload! Note: SVG is for now not properly supported...')
-      } else {
+      if (acceptedMimes.includes(getMime(bytes)) || isSvg(bytes)) {
         const content = bytesToBase64(bytes)
         this.fetchApi('/create', getInit('POST', { key, content }))
+      } else {
+        window.alert('Only images are allowed for upload!')
       }
     }
     reader.addEventListener('load', loadHandler.bind(this), false)
