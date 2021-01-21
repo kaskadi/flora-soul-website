@@ -25,8 +25,7 @@ class FileBrowser extends KaskadiElement {
   }
 
   appendPath (suffix) {
-    const path = this.path.length > 0 ? `${this.path}/${suffix}` : suffix
-    return path.replace(/%20/g, '') // handle case when for some reason there are spaces...
+    return this.path.length > 0 ? `${this.path}/${suffix}` : suffix
   }
 
   async fetchApi (init, path = '') {

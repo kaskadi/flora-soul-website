@@ -4,7 +4,7 @@ import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/
 function getData (file) {
   const src = file.querySelector('img').src
   return {
-    key: file.querySelector('div').textContent,
+    key: file.querySelector('div').textContent.trim(),
     content: src.startsWith('data:') ? src : null
   }
 }
