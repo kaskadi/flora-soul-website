@@ -15,9 +15,9 @@ app.use((req, res, next) => {
 
 app.get('/', require('./handlers/get.js'))
 app.get('/download', require('./handlers/download.js'))
-app.post('/', require('./handlers/upload.js'))
-app.post('/', require('./handlers/rename.js'))
-app.post('/', require('./handlers/delete.js'))
+app.post('/create', require('./handlers/create.js'))
+app.post('/rename', require('./handlers/rename.js'))
+app.post('/delete', require('./handlers/delete.js'))
 
 app.use((req, res, next) => {
   process.chdir(__dirname)
