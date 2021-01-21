@@ -1,6 +1,7 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 import './file-list.js'
+import './nav-bar.js'
 
 const apiUrl = 'http://localhost:3101'
 
@@ -71,8 +72,8 @@ class FileBrowser extends KaskadiElement {
 
   uploadHandler () {
     const filePicker = this.shadowRoot.querySelector('#file-picker')
-    filePicker.click()
     const filePickHandler = function (e) {
+      filePicker.removeEventListener('change', filePickHandler)
       const file = e.target.files[0]
       if (!file) {
         return
@@ -80,15 +81,16 @@ class FileBrowser extends KaskadiElement {
       const key = this.appendPath(file.name)
       const reader = new window.FileReader()
       const loadHandler = function () {
+        reader.removeEventListener('load', loadHandler)
         // convert image file to base64 string
         const content = reader.result
         this.fetchApi(this.getInit('POST', { key, content }), '/create')
       }
       reader.addEventListener('load', loadHandler.bind(this), false)
       reader.readAsDataURL(file)
-      filePicker.removeEventListener('change', filePickHandler)
     }
     filePicker.addEventListener('change', filePickHandler.bind(this))
+    filePicker.click()
   }
 
   deleteHandler () {
@@ -124,6 +126,10 @@ class FileBrowser extends KaskadiElement {
     }
   }
 
+  navHandler (e) {
+    this.path = e.detail
+  }
+
   static get styles () {
     return css`
       :host{
@@ -152,37 +158,19 @@ class FileBrowser extends KaskadiElement {
       #controls button:not([disabled]):hover {
         cursor: pointer;
       }
-      nav {
+      #browser fs-nav-bar {
+        width: 100%;
+        box-sizing: border-box;
         border-bottom: 1px solid black;
         padding: 5px;
-      }
-      nav div {
-        display: inline-block;
-      }
-      .path-part:hover {
-        cursor: pointer;
-        background: #DDD;
-      }
-      .bold {
-        font-weight: bold;
       }
     `
   }
 
   render () {
-    const pathParts = this.path.split('/').filter(part => part.length > 0)
-    const createNavPart = (part, i, isBold) => html`
-      <div>></div>
-      <div class="path-part ${isBold ? 'bold' : ''}" data-index="${i}" @click="${(e) => { this.path = pathParts.slice(0, Number(e.path[0].getAttribute('data-index'))).join('/') }}">${part}</div>
-    `
     return html`
       <div id="browser">
-        <nav>
-          ${createNavPart('Root', 0, pathParts.length === 0)}
-          ${pathParts.map((part, i) => html`
-            ${createNavPart(part, i + 1, i === pathParts.length - 1)}
-          `)}
-        </nav>
+        <fs-nav-bar path="${this.path}" @file-nav="${this.navHandler}"></fs-nav-bar>
         <fs-file-list @file-select="${this.selectHandler}" @file-open="${this.openHandler}"></fs-file-list>
         <div id="controls">
           <button @click="${this.uploadHandler}">Upload</button>
