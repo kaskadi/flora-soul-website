@@ -1,7 +1,9 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
+import appendPath from './append-path.js'
 import './file-list.js'
-import './nav-bar.js'
+import './browser-nav.js'
+import './browser-controls.js'
 
 const apiUrl = 'http://localhost:3101'
 
@@ -25,25 +27,6 @@ class FileBrowser extends KaskadiElement {
     }
   }
 
-  appendPath (suffix) {
-    return this.path.length > 0 ? `${this.path}/${suffix}` : suffix
-  }
-
-  async fetchApi (init, path = '') {
-    await fetch(`${apiUrl}${path}`, init)
-    return this.navigate(this.path)
-  }
-
-  getInit (method, body) {
-    return {
-      method,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    }
-  }
-
   async navigate (path) {
     const res = await fetch(`${apiUrl}?path=${path}`)
     // reset focus
@@ -62,7 +45,7 @@ class FileBrowser extends KaskadiElement {
 
   openHandler (e) {
     const { content, key } = e.detail
-    const filePath = this.appendPath(key)
+    const filePath = appendPath(this.path, key)
     if (!content) {
       this.path = filePath
     } else {
@@ -70,64 +53,18 @@ class FileBrowser extends KaskadiElement {
     }
   }
 
-  uploadHandler () {
-    const filePicker = this.shadowRoot.querySelector('#file-picker')
-    const filePickHandler = function (e) {
-      filePicker.removeEventListener('change', filePickHandler)
-      const file = e.target.files[0]
-      if (!file) {
-        return
-      }
-      const key = this.appendPath(file.name)
-      const reader = new window.FileReader()
-      const loadHandler = function () {
-        reader.removeEventListener('load', loadHandler)
-        // convert image file to base64 string
-        const content = reader.result
-        this.fetchApi(this.getInit('POST', { key, content }), '/create')
-      }
-      reader.addEventListener('load', loadHandler.bind(this), false)
-      reader.readAsDataURL(file)
-    }
-    filePicker.addEventListener('change', filePickHandler.bind(this))
-    filePicker.click()
+  navHandler (e) {
+    this.path = e.detail
   }
 
-  deleteHandler () {
-    const key = this.selectedFile.key
-    if (!window.confirm(`Do you really want to delete ${key}?`)) {
-      return
-    }
-    const filePath = this.appendPath(key)
-    this.fetchApi(this.getInit('POST', { key: filePath }), '/delete')
-  }
-
-  renameHandler () {
-    let key = window.prompt('New file name')
-    if (!key) {
-      return
-    }
-    key = this.appendPath(key)
-    const oldKey = this.appendPath(this.selectedFile.key)
-    this.fetchApi(this.getInit('POST', { oldKey, key }), '/rename')
-  }
-
-  newFolderHandler () {
-    const name = window.prompt('Folder name')
-    if (!name) {
-      return
-    }
-    this.fetchApi(this.getInit('POST', { key: this.appendPath(name) }), '/create')
+  controlHandler () {
+    this.navigate(this.path)
   }
 
   updated (changedProperties) {
     if (changedProperties.has('path')) {
       this.navigate(this.path)
     }
-  }
-
-  navHandler (e) {
-    this.path = e.detail
   }
 
   static get styles () {
@@ -140,29 +77,20 @@ class FileBrowser extends KaskadiElement {
         width: 100%;
         border: 1px solid black;
       }
+      #browser fs-browser-nav {
+        width: 100%;
+        box-sizing: border-box;
+        border-bottom: 1px solid black;
+        padding: 5px;
+      }
       #browser fs-file-list {
         width: 100%;
         height: 500px;
         overflow-y: auto;
       }
-      #controls {
+      #browser fs-browser-controls {
         width: 100%;
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: center;
-        align-items: center;
         border-top: 1px solid black;
-        padding: 10px 0;
-        background: #DDD;
-      }
-      #controls button:not([disabled]):hover {
-        cursor: pointer;
-      }
-      #browser fs-nav-bar {
-        width: 100%;
-        box-sizing: border-box;
-        border-bottom: 1px solid black;
-        padding: 5px;
       }
     `
   }
@@ -170,15 +98,9 @@ class FileBrowser extends KaskadiElement {
   render () {
     return html`
       <div id="browser">
-        <fs-nav-bar path="${this.path}" @file-nav="${this.navHandler}"></fs-nav-bar>
+        <fs-browser-nav path="${this.path}" @file-nav="${this.navHandler}"></fs-browser-nav>
         <fs-file-list @file-select="${this.selectHandler}" @file-open="${this.openHandler}"></fs-file-list>
-        <div id="controls">
-          <button @click="${this.uploadHandler}">Upload</button>
-          <input id="file-picker" type="file" accept="image/*" hidden>
-          <button @click="${this.newFolderHandler}">New folder</button>
-          <button @click="${this.deleteHandler}" ?disabled="${!this.selectedFile}">Delete</button>
-          <button @click="${this.renameHandler}" ?disabled="${!this.selectedFile}">Rename</button>
-        </div>
+        <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${apiUrl}" path="${this.path}" @control-call="${this.controlHandler}"></fs-browser-controls>
       </div>
     `
   }

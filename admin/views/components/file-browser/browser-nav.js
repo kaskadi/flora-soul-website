@@ -1,7 +1,7 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 
-class NavBar extends KaskadiElement {
+class BrowserNav extends KaskadiElement {
   constructor () {
     super()
     this.path = ''
@@ -58,4 +58,4 @@ class NavBar extends KaskadiElement {
   }
 }
 
-customElements.define('fs-nav-bar', NavBar)
+customElements.define('fs-browser-nav', BrowserNav)
