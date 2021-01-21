@@ -26,14 +26,12 @@ class FileBrowser extends KaskadiElement {
 
   appendPath (suffix) {
     const path = this.path.length > 0 ? `${this.path}/${suffix}` : suffix
-    return path.replace(/%20/g, '') // handle case when for some reason there are backspaces...
+    return path.replace(/%20/g, '') // handle case when for some reason there are spaces...
   }
 
-  fetchApi (init, url = apiUrl) {
-    return fetch(url, init)
-      .then(() => {
-        this.navigate(this.path)
-      })
+  async fetchApi (init, url = apiUrl) {
+    await fetch(url, init)
+    return this.navigate(this.path)
   }
 
   getInit (method, body) {
@@ -46,18 +44,16 @@ class FileBrowser extends KaskadiElement {
     }
   }
 
-  navigate (path) {
-    return fetch(`${apiUrl}?path=${path}`)
-      .then(async res => {
-        // reset focus
-        this.shadowRoot.querySelector('fs-file-list').focus = null
-        const { status } = res
-        if (status === 404) {
-          this.shadowRoot.querySelector('fs-file-list').files = null
-        } else if (status === 200) {
-          this.shadowRoot.querySelector('fs-file-list').files = await res.json()
-        }
-      })
+  async navigate (path) {
+    const res = await fetch(`${apiUrl}?path=${path}`)
+    // reset focus
+    this.shadowRoot.querySelector('fs-file-list').focus = null
+    const { status } = res
+    if (status === 404) {
+      this.shadowRoot.querySelector('fs-file-list').files = null
+    } else if (status === 200) {
+      this.shadowRoot.querySelector('fs-file-list').files = await res.json()
+    }
   }
 
   selectHandler (e) {
@@ -191,7 +187,7 @@ class FileBrowser extends KaskadiElement {
         <fs-file-list @file-select="${this.selectHandler}" @file-open="${this.openHandler}"></fs-file-list>
         <div id="controls">
           <button @click="${this.uploadHandler}">Upload</button>
-          <input id="file-picker" type="file" hidden>
+          <input id="file-picker" type="file" accept="image/*" hidden>
           <button @click="${this.newFolderHandler}">New folder</button>
           <button @click="${this.deleteHandler}" ?disabled="${!this.selectedFile}">Delete</button>
           <button @click="${this.renameHandler}" ?disabled="${!this.selectedFile}">Rename</button>
