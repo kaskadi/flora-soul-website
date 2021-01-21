@@ -11,7 +11,7 @@ class FileBrowser extends KaskadiElement {
   constructor () {
     super()
     this.selectedFile = null
-    this.path = ''
+    this.path = (new URL(window.location)).searchParams.get('path') || '' // check if a path was provided as query string, else load the root of the folder
   }
 
   static get properties () {
