@@ -29,8 +29,8 @@ class FileBrowser extends KaskadiElement {
     return path.replace(/%20/g, '') // handle case when for some reason there are spaces...
   }
 
-  async fetchApi (init, url = apiUrl) {
-    await fetch(url, init)
+  async fetchApi (init, path = '') {
+    await fetch(`${apiUrl}${path}`, init)
     return this.navigate(this.path)
   }
 
@@ -83,7 +83,7 @@ class FileBrowser extends KaskadiElement {
       const loadHandler = function () {
         // convert image file to base64 string
         const content = reader.result
-        this.fetchApi(this.getInit('PUT', { key, content }))
+        this.fetchApi(this.getInit('POST', { key, content }), '/create')
       }
       reader.addEventListener('load', loadHandler.bind(this), false)
       reader.readAsDataURL(file)
@@ -98,7 +98,7 @@ class FileBrowser extends KaskadiElement {
       return
     }
     const filePath = this.appendPath(key)
-    this.fetchApi(this.getInit('DELETE', { key: filePath }))
+    this.fetchApi(this.getInit('POST', { key: filePath }), '/delete')
   }
 
   renameHandler () {
@@ -108,7 +108,7 @@ class FileBrowser extends KaskadiElement {
     }
     key = this.appendPath(key)
     const oldKey = this.appendPath(this.selectedFile.key)
-    this.fetchApi(this.getInit('PATCH', { oldKey, key }))
+    this.fetchApi(this.getInit('POST', { oldKey, key }), '/rename')
   }
 
   newFolderHandler () {
@@ -116,7 +116,7 @@ class FileBrowser extends KaskadiElement {
     if (!name) {
       return
     }
-    this.fetchApi(this.getInit('PUT', { key: this.appendPath(name) }))
+    this.fetchApi(this.getInit('POST', { key: this.appendPath(name) }), '/create')
   }
 
   updated (changedProperties) {
