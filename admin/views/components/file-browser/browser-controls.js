@@ -106,20 +106,22 @@ class BrowserControls extends KaskadiElement {
   }
 
   filePickHandler (e) {
-    const file = e.target.files[0]
+    const filePicker = e.target
+    const file = filePicker.files[0]
     if (!file) {
       return
     }
     const reader = new window.FileReader()
-    const loadHandler = function () {
+    const loadHandler = async function () {
       const key = appendPath(this.path, file.name)
       const bytes = new Uint8Array(reader.result)
       if (acceptedMimes.includes(getMime(bytes)) || isSvg(bytes)) {
         const content = bytesToBase64(bytes)
-        this.fetchApi('/create', getInit('POST', { key, content }))
+        await this.fetchApi('/create', getInit('POST', { key, content }))
       } else {
         window.alert('Invalid file type: only images are allowed for upload!')
       }
+      filePicker.value = ''
     }
     reader.addEventListener('load', loadHandler.bind(this), false)
     reader.readAsArrayBuffer(file)
