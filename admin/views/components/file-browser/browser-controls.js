@@ -1,16 +1,7 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 import appendPath from './append-path.js'
-
-function getInit (method, body) {
-  return {
-    method,
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
-  }
-}
+import { getInit, uploadFiles } from './api-utils.js'
 
 class BrowserControls extends KaskadiElement {
   static get properties () {
@@ -46,37 +37,22 @@ class BrowserControls extends KaskadiElement {
     `
   }
 
-  async fetchApi (path, init) {
-    const res = await window.fetch(`${this.apiUrl}${path}`, init)
-    const event = new CustomEvent('control-call', {
-      detail: res
-    })
+  fireEvent (detail = {}) {
+    const event = new CustomEvent('control-call', { detail })
     this.dispatchEvent(event)
-    return res
   }
 
-  uploadFile (filePicker, file) {
-    const reader = new window.FileReader()
-    const loadHandler = async function (e) {
-      filePicker.value = ''
-      const key = appendPath(this.path, file.name)
-      const content = e.target.result
-      const res = await this.fetchApi('/create', getInit('POST', { key, content }))
-      window.alert(await res.text())
-    }
-    reader.addEventListener('load', loadHandler.bind(this), false)
-    reader.readAsDataURL(file)
+  async fetchApi (path, init) {
+    const res = await window.fetch(`${this.apiUrl}${path}`, init)
+    this.fireEvent(res)
+    return res
   }
 
   filePickHandler (e) {
     const filePicker = e.target
     const { files } = filePicker
-    if (files.length === 0) {
-      return
-    }
-    for (const file of Array.from(files)) {
-      this.uploadFile(filePicker, file)
-    }
+    const { apiUrl, path } = this
+    uploadFiles(files, { apiUrl, path }, this.fireEvent.bind(this))
   }
 
   uploadHandler () {
