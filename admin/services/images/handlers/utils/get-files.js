@@ -14,6 +14,16 @@ module.exports = (dir = process.cwd()) => {
         content: statSync(filePath).isDirectory() ? null : getContent(filePath)
       }
     })
+    .sort((fileA, fileB) => {
+      const isContentString = obj => typeof obj.content === 'string'
+      if (!isContentString(fileA) && isContentString(fileB)) {
+        return -1
+      } else if (isContentString(fileA) && !isContentString(fileB)) {
+        return 1
+      } else {
+        return 0
+      }
+    })
   return {
     dir: dir.replace(process.cwd(), ''),
     files
