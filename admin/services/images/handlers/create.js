@@ -1,5 +1,5 @@
 const { writeFileSync, existsSync, mkdirSync } = require('fs')
-const wsSend = require('./utils/ws-send.js')
+const passKey = require('./utils/pass-key.js')
 
 const mimeSignatures = {
   'image/bmp': ['424d'],
@@ -43,7 +43,7 @@ function getMime (bytes) {
   return checkMimeSignature(header)
 }
 
-module.exports = (req, res) => {
+module.exports = (req, res, next) => {
   const { key, content } = req.body
   createStructure(key)
   if (content) {
@@ -57,8 +57,9 @@ module.exports = (req, res) => {
     }
   } else {
     mkdirSync(key)
+    res.status(201).send(`File ${key} successfully saved!`)
   }
-  wsSend(key)
+  passKey(key, res, next)
 }
 
 function createStructure (key) {
