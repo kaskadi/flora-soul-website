@@ -105,26 +105,33 @@ class BrowserControls extends KaskadiElement {
     this.dispatchEvent(event)
   }
 
-  filePickHandler (e) {
-    const filePicker = e.target
-    const file = filePicker.files[0]
-    if (!file) {
-      return
-    }
+  uploadFile (filePicker, file) {
     const reader = new window.FileReader()
     const loadHandler = async function () {
-      const key = appendPath(this.path, file.name)
+      filePicker.value = ''
+      const { name } = file
+      const key = appendPath(this.path, name)
       const bytes = new Uint8Array(reader.result)
       if (acceptedMimes.includes(getMime(bytes)) || isSvg(bytes)) {
         const content = bytesToBase64(bytes)
         await this.fetchApi('/create', getInit('POST', { key, content }))
       } else {
-        window.alert('Invalid file type: only images are allowed for upload!')
+        window.alert(`Invalid file type for ${name}: only images are allowed for upload!`)
       }
-      filePicker.value = ''
     }
     reader.addEventListener('load', loadHandler.bind(this), false)
     reader.readAsArrayBuffer(file)
+  }
+
+  filePickHandler (e) {
+    const filePicker = e.target
+    const { files } = filePicker
+    if (files.length === 0) {
+      return
+    }
+    for (const file of Array.from(files)) {
+      this.uploadFile(filePicker, file)
+    }
   }
 
   uploadHandler () {
@@ -162,7 +169,7 @@ class BrowserControls extends KaskadiElement {
     return html`
       <div id="controls">
         <button @click="${this.uploadHandler}">Upload</button>
-        <input id="file-picker" type="file" accept="${acceptedMimes.join(', ')}" @change="${this.filePickHandler}" hidden>
+        <input id="file-picker" type="file" accept="${acceptedMimes.join(', ')}" @change="${this.filePickHandler}" multiple hidden>
         <button @click="${this.newFolderHandler}">New folder</button>
         <button @click="${this.deleteHandler}" ?disabled="${!this.selectedFile}">Delete</button>
         <button @click="${this.renameHandler}" ?disabled="${!this.selectedFile}">Rename</button>
