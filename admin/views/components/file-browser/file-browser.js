@@ -79,9 +79,7 @@ class FileBrowser extends KaskadiElement {
       }
       #browser fs-browser-nav {
         width: 100%;
-        box-sizing: border-box;
         border-bottom: 1px solid black;
-        padding: 5px;
       }
       #browser fs-file-list {
         width: 100%;
@@ -98,7 +96,7 @@ class FileBrowser extends KaskadiElement {
   render () {
     return html`
       <div id="browser">
-        <fs-browser-nav path="${this.path}" @file-nav="${this.navHandler}"></fs-browser-nav>
+        <fs-browser-nav path="${this.path}" @path-nav="${this.navHandler}"></fs-browser-nav>
         <fs-file-list @file-select="${this.selectHandler}" @file-open="${this.openHandler}"></fs-file-list>
         <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${apiUrl}" path="${this.path}" @control-call="${this.controlHandler}"></fs-browser-controls>
       </div>
