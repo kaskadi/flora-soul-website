@@ -6,6 +6,8 @@ class BrowserNav extends KaskadiElement {
     super()
     this.path = ''
     this.setPathParts()
+    this._history = []
+    this._historyPointer = -1
   }
 
   static get properties () {
@@ -37,9 +39,26 @@ class BrowserNav extends KaskadiElement {
     this.dispatchNav(targetPath)
   }
 
+  prevNav () {
+    this._historyPointer--
+    const targetPath = this._history[this._historyPointer]
+    this.dispatchNav(targetPath)
+  }
+
+  nextNav () {
+    this._historyPointer++
+    const targetPath = this._history[this._historyPointer]
+    this.dispatchNav(targetPath)
+  }
+
   updated (changedProperties) {
     if (changedProperties.has('path')) {
       this.setPathParts()
+      if (this._history[this._historyPointer] !== this.path) {
+        // we only update the history if the new path is not the one we are currently at
+        this._history.push(this.path)
+        this._historyPointer++
+      }
     }
   }
 
@@ -60,6 +79,13 @@ class BrowserNav extends KaskadiElement {
       }
       #nav-controls {
         border-right: 1px solid black;
+      }
+      #nav-controls button {
+        width: 32px;
+        height: 32px;
+      }
+      #nav-controls button:nth-of-type(1) {
+        margin-right: 10px;
       }
       #nav-controls button:not([disabled]):hover {
         cursor: pointer;
@@ -86,6 +112,8 @@ class BrowserNav extends KaskadiElement {
       <nav class="flex-row">
         <div class="nav-cell flex-row" id="nav-controls">
           <button @click="${this.upNav}" ?disabled="${this.path.length === 0}">&#11180;</button>
+          <button @click="${this.prevNav}" ?disabled="${this._historyPointer < 1}">&#8592;</button>
+          <button @click="${this.nextNav}" ?disabled="${this._historyPointer < 0 || this._historyPointer === this._history.length - 1}">&#8594;</button>
         </div>
         <div class="nav-cell flex-row" id="path-nav">
           ${createNavPart('Root', 0, this.pathParts.length === 0)}
