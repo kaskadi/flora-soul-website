@@ -36,7 +36,7 @@ const wss = new WebSocket.Server({ server, path: '/ws' })
 
 function broadcast (req, res, next) {
   const { key } = res.locals
-  const dir = key.length > 0 ? dirname(key) : ''
+  const dir = dirname(key) === '.' ? '' : dirname(key)
   const files = getFiles(dir)
   for (const client of wss.clients) {
     if (client.readyState === WebSocket.OPEN) {

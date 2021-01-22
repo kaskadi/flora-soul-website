@@ -18,7 +18,10 @@ class FileBrowser extends KaskadiElement {
     // connect to WebSocket and update files when receiving new data
     this.ws = new WebSocket(`${wsUrl}/ws`)
     this.ws.addEventListener('message', function (e) {
-      this.updateFiles(JSON.parse(e.data))
+      const { files, dir } = JSON.parse(e.data)
+      if (this.path === dir) {
+        this.updateFiles(files)
+      }
     }.bind(this))
   }
 
@@ -51,7 +54,8 @@ class FileBrowser extends KaskadiElement {
     if (status === 404) {
       this.updateFiles(null)
     } else if (status === 200) {
-      this.updateFiles(await res.json())
+      const { files } = await res.json()
+      this.updateFiles(files)
     }
   }
 
