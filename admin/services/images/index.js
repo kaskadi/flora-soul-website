@@ -1,7 +1,10 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const { Server } = require('ws')
 const port = 3101
+
+global.connections = []
 
 require('dotenv').config()
 
@@ -24,6 +27,12 @@ app.use((req, res, next) => {
   next()
 })
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Images API running http://localhost:${port}`)
+})
+
+const wss = new Server({ server, path: '/ws' })
+
+wss.on('connection', connection => {
+  global.connections = [...global.connections, connection]
 })

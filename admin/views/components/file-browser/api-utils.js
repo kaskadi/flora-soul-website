@@ -10,12 +10,11 @@ export function getInit (method, body) {
   }
 }
 
-export function uploadFiles (files, opts, cb) {
+export function uploadFiles (files, opts) {
   if (files.length === 0) {
     return
   }
   const { apiUrl, path } = opts
-  let reqIndex = 0
   for (const file of Array.from(files)) {
     const reader = new window.FileReader()
     const loadHandler = async function (e) {
@@ -24,10 +23,6 @@ export function uploadFiles (files, opts, cb) {
       const res = await window.fetch(`${apiUrl}/create`, getInit('POST', { key, content }))
       if (res.status === 400) {
         window.alert(await res.text())
-      }
-      reqIndex++
-      if (reqIndex === files.length) {
-        cb() // we want to call the callback once all files have been sent to the server
       }
     }
     reader.addEventListener('load', loadHandler, false)

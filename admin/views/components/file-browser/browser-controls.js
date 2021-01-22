@@ -37,22 +37,11 @@ class BrowserControls extends KaskadiElement {
     `
   }
 
-  fireEvent (detail = {}) {
-    const event = new CustomEvent('control-call', { detail })
-    this.dispatchEvent(event)
-  }
-
-  async fetchApi (path, init) {
-    const res = await window.fetch(`${this.apiUrl}${path}`, init)
-    this.fireEvent(res)
-    return res
-  }
-
   filePickHandler (e) {
     const filePicker = e.target
     const { files } = filePicker
     const { apiUrl, path } = this
-    uploadFiles(files, { apiUrl, path }, this.fireEvent.bind(this))
+    uploadFiles(files, { apiUrl, path })
   }
 
   uploadHandler () {
@@ -65,7 +54,7 @@ class BrowserControls extends KaskadiElement {
       return
     }
     const filePath = appendPath(this.path, key)
-    this.fetchApi('/delete', getInit('POST', { key: filePath }))
+    window.fetch(`${this.apiUrl}/delete`, getInit('POST', { key: filePath }))
   }
 
   renameHandler () {
@@ -75,7 +64,7 @@ class BrowserControls extends KaskadiElement {
     }
     key = appendPath(this.path, key)
     const oldKey = appendPath(this.path, this.selectedFile.key)
-    this.fetchApi('/rename', getInit('POST', { oldKey, key }))
+    window.fetch(`${this.apiUrl}/rename`, getInit('POST', { oldKey, key }))
   }
 
   newFolderHandler () {
@@ -83,7 +72,7 @@ class BrowserControls extends KaskadiElement {
     if (!name) {
       return
     }
-    this.fetchApi('/create', getInit('POST', { key: appendPath(this.path, name) }))
+    window.fetch(`${this.apiUrl}/create`, getInit('POST', { key: appendPath(this.path, name) }))
   }
 
   render () {

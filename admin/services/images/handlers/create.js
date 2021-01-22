@@ -1,4 +1,5 @@
 const { writeFileSync, existsSync, mkdirSync } = require('fs')
+const wsSend = require('./utils/ws-send.js')
 
 const mimeSignatures = {
   'image/bmp': ['424d'],
@@ -50,14 +51,14 @@ module.exports = (req, res) => {
     const bytes = Buffer.from(fileContent, 'base64')
     if (Object.keys(mimeSignatures).includes(getMime(bytes)) || isSvg(bytes)) {
       writeFileSync(key, fileContent, 'base64')
+      res.status(201).send(`File ${key} successfully saved!`)
     } else {
       res.status(400).send('Invalid file format: only images are allowed for upload...')
-      return
     }
   } else {
     mkdirSync(key)
   }
-  res.status(201).send(`File ${key} successfully saved!`)
+  wsSend(key)
 }
 
 function createStructure (key) {

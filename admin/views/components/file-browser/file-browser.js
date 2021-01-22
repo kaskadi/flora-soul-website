@@ -7,6 +7,7 @@ import './browser-nav.js'
 import './browser-controls.js'
 
 const apiUrl = 'http://localhost:3101'
+const wsUrl = 'ws://localhost:3101'
 
 class FileBrowser extends KaskadiElement {
   constructor () {
@@ -14,6 +15,11 @@ class FileBrowser extends KaskadiElement {
     this.selectedFile = null
     this.path = (new URL(window.location)).searchParams.get('path') || '' // check if a path was provided as query string, else load the root of the folder
     this.dragCounter = 0
+    // connect to WebSocket and update files when receiving new data
+    this.ws = new WebSocket(`${wsUrl}/ws`)
+    this.ws.addEventListener('message', function (e) {
+      this.updateFiles(JSON.parse(e.data))
+    }.bind(this))
   }
 
   static get properties () {
@@ -33,15 +39,19 @@ class FileBrowser extends KaskadiElement {
     }
   }
 
-  async navigate (path) {
-    const res = await fetch(`${apiUrl}?path=${path}`)
+  updateFiles (files) {
     // reset focus
     this.shadowRoot.querySelector('fs-file-list').focus = null
+    this.shadowRoot.querySelector('fs-file-list').files = files
+  }
+
+  async navigate (path) {
+    const res = await fetch(`${apiUrl}?path=${path}`)
     const { status } = res
     if (status === 404) {
-      this.shadowRoot.querySelector('fs-file-list').files = null
+      this.updateFiles(null)
     } else if (status === 200) {
-      this.shadowRoot.querySelector('fs-file-list').files = await res.json()
+      this.updateFiles(await res.json())
     }
   }
 
@@ -61,16 +71,6 @@ class FileBrowser extends KaskadiElement {
 
   navHandler (e) {
     this.path = e.detail
-  }
-
-  controlHandler () {
-    this.navigate(this.path)
-  }
-
-  updated (changedProperties) {
-    if (changedProperties.has('path')) {
-      this.navigate(this.path)
-    }
   }
 
   dragenter (e) {
@@ -95,7 +95,7 @@ class FileBrowser extends KaskadiElement {
     e.preventDefault()
     this.dragCounter = 0
     const { path } = this
-    uploadFiles(e.dataTransfer.files, { apiUrl, path }, () => this.navigate(this.path))
+    uploadFiles(e.dataTransfer.files, { apiUrl, path })
   }
 
   firstUpdated (changedProperties) {
@@ -114,6 +114,14 @@ class FileBrowser extends KaskadiElement {
     dropbox.removeEventListener('dragover', this.dragover, false)
     dropbox.removeEventListener('dragleave', this.dragleave, false)
     dropbox.removeEventListener('drop', this.drop, false)
+    // disconnect WebSocket
+    this.ws.close()
+  }
+
+  updated (changedProperties) {
+    if (changedProperties.has('path')) {
+      this.navigate(this.path)
+    }
   }
 
   static get styles () {
@@ -169,7 +177,7 @@ class FileBrowser extends KaskadiElement {
             <div>Drop your files here!</div>
           </div>
         </div>
-        <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${apiUrl}" path="${this.path}" @control-call="${this.controlHandler}"></fs-browser-controls>
+        <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${apiUrl}" path="${this.path}"></fs-browser-controls>
       </div>
     `
   }
