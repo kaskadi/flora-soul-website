@@ -2,7 +2,17 @@
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 import appendPath from './append-path.js'
 
-const acceptedMimes = ['bmp', 'gif', 'vnd.microsoft.icon', 'jpeg', 'png', 'svg+xml', 'tiff', 'webp'].map(format => `image/${format}`)
+const mimeSignatures = {
+  'image/bmp': ['424d'],
+  'image/gif': ['47494638'],
+  'image/vnd.microsoft.icon': ['00000100'],
+  'image/jpeg': ['ffd8ffdb', 'ffd8ffee', 'ffd8ffe0', 'ffd8ffe1', 'ffd8ffe2', 'ffd8ffe3', 'ffd8ffe8'],
+  'image/png': ['89504e47'],
+  'image/svg+xml': [],
+  'image/tiff': ['492049', '49492a00', '4d4d002a', '4d4d002b'],
+  'image/webp': ['52494646', '57454250']
+}
+const acceptedMimes = Object.keys(mimeSignatures)
 
 function bytesToBase64 (bytes) {
   let binary = ''
@@ -23,21 +33,12 @@ function isSvg (bytes) {
 }
 
 function checkMimeSignature (header) {
-  const signatures = {
-    'image/bmp': ['424d'],
-    'image/gif': ['47494638'],
-    'image/vnd.microsoft.icon': ['00000100'],
-    'image/jpeg': ['ffd8ffdb', 'ffd8ffee', 'ffd8ffe0', 'ffd8ffe1', 'ffd8ffe2', 'ffd8ffe3', 'ffd8ffe8'],
-    'image/png': ['89504e47'],
-    'image/tiff': ['492049', '49492a00', '4d4d002a', '4d4d002b'],
-    'image/webp': ['52494646', '57454250']
-  }
   const compareSig = header => sig => {
     const chars = header.split('').slice(0, sig.length) // we get characters from header and match to the signature length for checking
     return !chars.some((char, i) => char !== sig[i])
   }
-  for (const mime in signatures) {
-    if (signatures[mime].some(compareSig(header))) {
+  for (const mime in mimeSignatures) {
+    if (mimeSignatures[mime].some(compareSig(header))) {
       return mime
     }
   }
@@ -117,7 +118,7 @@ class BrowserControls extends KaskadiElement {
         const content = bytesToBase64(bytes)
         this.fetchApi('/create', getInit('POST', { key, content }))
       } else {
-        window.alert('Only images are allowed for upload!')
+        window.alert('Invalid file type: only images are allowed for upload!')
       }
     }
     reader.addEventListener('load', loadHandler.bind(this), false)
