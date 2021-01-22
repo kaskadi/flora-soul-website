@@ -2,58 +2,6 @@
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 import appendPath from './append-path.js'
 
-const mimeSignatures = {
-  'image/bmp': ['424d'],
-  'image/gif': ['47494638'],
-  'image/vnd.microsoft.icon': ['00000100'],
-  'image/jpeg': ['ffd8ffdb', 'ffd8ffee', 'ffd8ffe0', 'ffd8ffe1', 'ffd8ffe2', 'ffd8ffe3', 'ffd8ffe8'],
-  'image/png': ['89504e47'],
-  'image/svg+xml': [],
-  'image/tiff': ['492049', '49492a00', '4d4d002a', '4d4d002b'],
-  'image/webp': ['52494646', '57454250']
-}
-const acceptedMimes = Object.keys(mimeSignatures)
-
-function bytesToBase64 (bytes) {
-  let binary = ''
-  const len = bytes.byteLength
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i])
-  }
-  return window.btoa(binary)
-}
-
-function isSvg (bytes) {
-  let binary = ''
-  const len = bytes.byteLength
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i])
-  }
-  return binary.startsWith('<svg')
-}
-
-function checkMimeSignature (header) {
-  const compareSig = header => sig => {
-    const chars = header.split('').slice(0, sig.length) // we get characters from header and match to the signature length for checking
-    return !chars.some((char, i) => char !== sig[i])
-  }
-  for (const mime in mimeSignatures) {
-    if (mimeSignatures[mime].some(compareSig(header))) {
-      return mime
-    }
-  }
-  return null
-}
-
-function getMime (bytes) {
-  const headerArr = bytes.subarray(0, 4)
-  let header = ''
-  for (let i = 0; i < headerArr.length; i++) {
-    header += headerArr[i].toString(16)
-  }
-  return checkMimeSignature(header)
-}
-
 function getInit (method, body) {
   return {
     method,
@@ -99,28 +47,25 @@ class BrowserControls extends KaskadiElement {
   }
 
   async fetchApi (path, init) {
+    const res = await window.fetch(`${this.apiUrl}${path}`, init)
     const event = new CustomEvent('control-call', {
-      detail: await window.fetch(`${this.apiUrl}${path}`, init)
+      detail: res
     })
     this.dispatchEvent(event)
+    return res
   }
 
   uploadFile (filePicker, file) {
     const reader = new window.FileReader()
-    const loadHandler = async function () {
+    const loadHandler = async function (e) {
       filePicker.value = ''
-      const { name } = file
-      const key = appendPath(this.path, name)
-      const bytes = new Uint8Array(reader.result)
-      if (acceptedMimes.includes(getMime(bytes)) || isSvg(bytes)) {
-        const content = bytesToBase64(bytes)
-        await this.fetchApi('/create', getInit('POST', { key, content }))
-      } else {
-        window.alert(`Invalid file type for ${name}: only images are allowed for upload!`)
-      }
+      const key = appendPath(this.path, file.name)
+      const content = e.target.result
+      const res = await this.fetchApi('/create', getInit('POST', { key, content }))
+      window.alert(await res.text())
     }
     reader.addEventListener('load', loadHandler.bind(this), false)
-    reader.readAsArrayBuffer(file)
+    reader.readAsDataURL(file)
   }
 
   filePickHandler (e) {
@@ -169,7 +114,7 @@ class BrowserControls extends KaskadiElement {
     return html`
       <div id="controls">
         <button @click="${this.uploadHandler}">Upload</button>
-        <input id="file-picker" type="file" accept="${acceptedMimes.join(', ')}" @change="${this.filePickHandler}" multiple hidden>
+        <input id="file-picker" type="file" accept="image/*" @change="${this.filePickHandler}" multiple hidden>
         <button @click="${this.newFolderHandler}">New folder</button>
         <button @click="${this.deleteHandler}" ?disabled="${!this.selectedFile}">Delete</button>
         <button @click="${this.renameHandler}" ?disabled="${!this.selectedFile}">Rename</button>
