@@ -54,11 +54,19 @@ class BrowserNav extends KaskadiElement {
   updated (changedProperties) {
     if (changedProperties.has('path')) {
       this.setPathParts()
-      if (this._history[this._historyPointer] !== this.path) {
-        // we only update the history if the new path is not the one we are currently at
-        this._history.push(this.path)
-        this._historyPointer++
+      if (this._history[this._historyPointer] === this.path) {
+        // if we are already at the good path in history (i.e. we navigate via prev/next) then we just stop here
+        return
       }
+      if (this._history[this._historyPointer + 1] !== this.path) {
+        // we only want to push the new path in the history if it's not already the next path in line
+        this._history = [
+          ...this._history.slice(0, this._historyPointer + 1),
+          this.path,
+          ...this._history.slice(this._historyPointer + 1)
+        ]
+      }
+      this._historyPointer++
     }
   }
 
