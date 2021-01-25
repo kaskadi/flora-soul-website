@@ -2,6 +2,12 @@
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 
 class StatusDisplay extends KaskadiElement {
+  constructor () {
+    super()
+    this.statusText = 'loading...'
+    this.status = 0
+  }
+
   static get properties () {
     return {
       statusText: { type: String },
