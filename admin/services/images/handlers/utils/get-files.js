@@ -2,7 +2,7 @@ const { readdirSync, readFileSync, statSync } = require('fs')
 const { join } = require('path')
 const { lookup } = require('mime-types')
 
-module.exports = (dir = process.cwd()) => {
+module.exports = (dir = '') => {
   if (dir.length === 0) {
     dir = process.cwd()
   }
