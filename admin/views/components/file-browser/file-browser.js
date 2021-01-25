@@ -129,7 +129,7 @@ class FileBrowser extends KaskadiElement {
     if (changedProperties.has('path')) {
       dispatchStatus('loading...')
       await this.navigate(this.path)
-      dispatchStatus('ready')
+      dispatchStatus('ready', 1)
     }
   }
 
@@ -151,7 +151,7 @@ class FileBrowser extends KaskadiElement {
       }
       #dropbox {
         position: relative;
-        height: 500px;
+        height: 450px;
         overflow-y: auto;
       }
       #dropbox > * {
@@ -172,6 +172,14 @@ class FileBrowser extends KaskadiElement {
       }
       fs-browser-controls {
         border-top: 1px solid black;
+      }
+      fs-status {
+        position: absolute;
+        bottom: 20px;
+        right: 10px;
+        background: #EEE;
+        padding: 10px;
+        border-radius: 10px;
       }
     `
   }

@@ -4,12 +4,14 @@ import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/
 class StatusDisplay extends KaskadiElement {
   static get properties () {
     return {
-      status: { type: String }
+      statusText: { type: String },
+      status: { type: Number }
     }
   }
 
   statusUpdate (e) {
-    this.status = e.detail
+    this.statusText = e.detail.statusText
+    this.status = e.detail.status
   }
 
   connectedCallback () {
@@ -27,22 +29,23 @@ class StatusDisplay extends KaskadiElement {
   static get styles () {
     return css`
       :host {
-        position: absolute;
-        bottom: 20px;
-        right: 10px;
-        background: #EEE;
-        padding: 10px;
-        border-radius: 10px;
+        display: inline-block
       }
       div {
         font-weight: bold;
+      }
+      div span {
+        color: orange;
+      }
+      .ready {
+        color: green;
       }
     `
   }
 
   render () {
     return html`
-      <div>Status: ${this.status}</div>
+      <div>Status: <span class="${this.status === 1 ? 'ready' : ''}">${this.statusText}<span></div>
     `
   }
 }

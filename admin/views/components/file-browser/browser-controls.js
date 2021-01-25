@@ -75,7 +75,7 @@ class BrowserControls extends KaskadiElement {
     }
     dispatchStatus('creating...')
     await window.fetch(`${this.apiUrl}/create`, getInit('POST', { key: appendPath(this.path, name) }))
-    dispatchStatus('ready')
+    dispatchStatus('ready', 1)
   }
 
   render () {

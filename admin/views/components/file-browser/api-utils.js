@@ -30,7 +30,7 @@ export function uploadFiles (files, opts) {
         window.alert(await res.text())
       }
       if (fileIndex === filesArray.length - 1) {
-        dispatchStatus('ready')
+        dispatchStatus('ready', 1)
       }
     }
     reader.addEventListener('load', loadHandler, false)
