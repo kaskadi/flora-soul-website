@@ -1,4 +1,6 @@
-const { writeFileSync, existsSync, mkdirSync } = require('fs')
+const { existsSync, mkdirSync } = require('fs')
+const { basename } = require('path')
+const sharp = require('sharp')
 const passKey = require('./utils/pass-key.js')
 
 const mimeSignatures = {
@@ -10,6 +12,36 @@ const mimeSignatures = {
   'image/svg+xml': [],
   'image/tiff': ['492049', '49492a00', '4d4d002a', '4d4d002b'],
   'image/webp': ['52494646', '57454250']
+}
+
+module.exports = async (req, res, next) => {
+  const { key, content } = req.body
+  createStructure(key)
+  if (content) {
+    const fileContent = content.replace(/^data:[a-z]+\/[a-z]+;base64,/, '') // strip off base64 URL header from string to retrieve actual encoded data
+    const bytes = Buffer.from(fileContent, 'base64')
+    const mime = getMime(bytes)
+    if (Object.keys(mimeSignatures).includes(mime) || isSvg(bytes)) {
+      await writeAsWebP(bytes, key, mime)
+      res.status(201).send(`File ${key} successfully saved!`)
+    } else {
+      res.status(400).send('Invalid file format: only images are allowed for upload...')
+    }
+  } else {
+    mkdirSync(key)
+    res.status(201).send(`File ${key} successfully saved!`)
+  }
+  passKey(key, res, next)
+}
+
+function createStructure (key) {
+  const dirs = key.split('/').slice(0, -1)
+  for (let i = 0; i < dirs.length; i++) {
+    const dirPath = dirs.slice(0, i + 1).join('/')
+    if (!existsSync(dirPath)) {
+      mkdirSync(dirPath)
+    }
+  }
 }
 
 function isSvg (bytes) {
@@ -43,31 +75,14 @@ function getMime (bytes) {
   return checkMimeSignature(header)
 }
 
-module.exports = (req, res, next) => {
-  const { key, content } = req.body
-  createStructure(key)
-  if (content) {
-    const fileContent = content.replace(/^data:[a-z]+\/[a-z]+;base64,/, '') // strip off base64 URL header from string to retrieve actual encoded data
-    const bytes = Buffer.from(fileContent, 'base64')
-    if (Object.keys(mimeSignatures).includes(getMime(bytes)) || isSvg(bytes)) {
-      writeFileSync(key, fileContent, 'base64')
-      res.status(201).send(`File ${key} successfully saved!`)
-    } else {
-      res.status(400).send('Invalid file format: only images are allowed for upload...')
-    }
-  } else {
-    mkdirSync(key)
-    res.status(201).send(`File ${key} successfully saved!`)
-  }
-  passKey(key, res, next)
-}
-
-function createStructure (key) {
-  const dirs = key.split('/').slice(0, -1)
-  for (let i = 0; i < dirs.length; i++) {
-    const dirPath = dirs.slice(0, i + 1).join('/')
-    if (!existsSync(dirPath)) {
-      mkdirSync(dirPath)
-    }
-  }
+function writeAsWebP (bytes, key, mime) {
+  const fileName = `${basename(key).split('.').slice(0, -1)}.webp`
+  return sharp(bytes, { animated: mime === 'image/gif' })
+    .webp(
+      {
+        quality: 100,
+        lossless: true
+      }
+    )
+    .toFile(fileName)
 }
