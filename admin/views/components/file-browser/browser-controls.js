@@ -2,6 +2,7 @@
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 import appendPath from './append-path.js'
 import { getInit, uploadFiles } from './api-utils.js'
+import dispatchStatus from './status-dispatcher.js'
 
 class BrowserControls extends KaskadiElement {
   static get properties () {
@@ -67,12 +68,14 @@ class BrowserControls extends KaskadiElement {
     window.fetch(`${this.apiUrl}/rename`, getInit('POST', { oldKey, key }))
   }
 
-  newFolderHandler () {
+  async newFolderHandler () {
     const name = window.prompt('Folder name')
     if (!name) {
       return
     }
-    window.fetch(`${this.apiUrl}/create`, getInit('POST', { key: appendPath(this.path, name) }))
+    dispatchStatus('creating...')
+    await window.fetch(`${this.apiUrl}/create`, getInit('POST', { key: appendPath(this.path, name) }))
+    dispatchStatus('ready')
   }
 
   render () {

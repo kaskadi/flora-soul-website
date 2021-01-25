@@ -1,4 +1,5 @@
 import appendPath from './append-path.js'
+import dispatchStatus from './status-dispatcher.js'
 
 export function getInit (method, body) {
   return {
@@ -15,14 +16,21 @@ export function uploadFiles (files, opts) {
     return
   }
   const { apiUrl, path } = opts
-  for (const file of Array.from(files)) {
+  dispatchStatus('uploading...')
+  let fileIndex = -1
+  const filesArray = Array.from(files)
+  for (const file of filesArray) {
     const reader = new window.FileReader()
     const loadHandler = async function (e) {
       const key = appendPath(path, file.name)
       const content = e.target.result
       const res = await window.fetch(`${apiUrl}/create`, getInit('POST', { key, content }))
+      fileIndex++
       if (res.status === 400) {
         window.alert(await res.text())
+      }
+      if (fileIndex === filesArray.length - 1) {
+        dispatchStatus('ready')
       }
     }
     reader.addEventListener('load', loadHandler, false)

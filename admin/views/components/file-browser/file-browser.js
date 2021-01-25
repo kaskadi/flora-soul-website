@@ -2,9 +2,11 @@
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 import appendPath from './append-path.js'
 import { uploadFiles } from './api-utils.js'
+import dispatchStatus from './status-dispatcher.js'
 import './file-list.js'
 import './browser-nav.js'
 import './browser-controls.js'
+import './status-display.js'
 
 const apiUrl = 'http://localhost:3101'
 const wsUrl = 'ws://localhost:3101'
@@ -113,6 +115,7 @@ class FileBrowser extends KaskadiElement {
 
   disconnectedCallback () {
     super.disconnectedCallback()
+    // drag & drop event listeners removal
     const dropbox = this.shadowRoot.querySelector('#dropbox')
     dropbox.removeEventListener('dragenter', this.dragenter, false)
     dropbox.removeEventListener('dragover', this.dragover, false)
@@ -122,9 +125,11 @@ class FileBrowser extends KaskadiElement {
     this.ws.close()
   }
 
-  updated (changedProperties) {
+  async updated (changedProperties) {
     if (changedProperties.has('path')) {
-      this.navigate(this.path)
+      dispatchStatus('loading...')
+      await this.navigate(this.path)
+      dispatchStatus('ready')
     }
   }
 
@@ -183,6 +188,7 @@ class FileBrowser extends KaskadiElement {
         </div>
         <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${apiUrl}" path="${this.path}"></fs-browser-controls>
       </div>
+      <fs-status></fs-status>
     `
   }
 }
