@@ -1,8 +1,8 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
-import appendPath from './append-path.js'
-import { getInit, uploadFiles } from './api-utils.js'
-import dispatchStatus from './status-dispatcher.js'
+import appendPath from './utils/append-path.js'
+import { getInit, uploadFiles } from './utils/api-utils.js'
+import dispatchStatus from './utils/status-dispatcher.js'
 
 class BrowserControls extends KaskadiElement {
   static get properties () {
