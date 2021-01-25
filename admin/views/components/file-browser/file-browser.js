@@ -53,12 +53,14 @@ class FileBrowser extends KaskadiElement {
   async navigate (path) {
     const res = await fetch(`${apiUrl}?path=${path}`)
     const { status } = res
+    dispatchStatus('loading...')
     if (status === 404) {
       this.updateFiles(null)
     } else if (status === 200) {
       const { files } = await res.json()
       this.updateFiles(files)
     }
+    dispatchStatus('ready', 1)
   }
 
   selectHandler (e) {
@@ -125,11 +127,9 @@ class FileBrowser extends KaskadiElement {
     this.ws.close()
   }
 
-  async updated (changedProperties) {
+  updated (changedProperties) {
     if (changedProperties.has('path')) {
-      dispatchStatus('loading...')
-      await this.navigate(this.path)
-      dispatchStatus('ready', 1)
+      this.navigate(this.path)
     }
   }
 
