@@ -1,5 +1,5 @@
 const { existsSync, mkdirSync } = require('fs')
-const { basename } = require('path')
+const { extname } = require('path')
 const sharp = require('sharp')
 const passKey = require('./utils/pass-key.js')
 
@@ -15,13 +15,15 @@ const mimeSignatures = {
 }
 
 module.exports = async (req, res, next) => {
-  const { key, content } = req.body
+  const { content } = req.body
+  let { key } = req.body
   createStructure(key)
   if (content) {
     const fileContent = content.replace(/^data:[a-z]+\/[a-z]+;base64,/, '') // strip off base64 URL header from string to retrieve actual encoded data
     const bytes = Buffer.from(fileContent, 'base64')
     const mime = getMime(bytes)
     if (Object.keys(mimeSignatures).includes(mime) || isSvg(bytes)) {
+      key = key.replace(extname(key), '.webp')
       await writeAsWebP(bytes, key, mime)
       res.status(201).send(`File ${key} successfully saved!`)
     } else {
@@ -76,7 +78,6 @@ function getMime (bytes) {
 }
 
 function writeAsWebP (bytes, key, mime) {
-  const fileName = `${basename(key).split('.').slice(0, -1)}.webp`
   return sharp(bytes, { animated: mime === 'image/gif' })
     .webp(
       {
@@ -84,5 +85,5 @@ function writeAsWebP (bytes, key, mime) {
         lossless: true
       }
     )
-    .toFile(fileName)
+    .toFile(key)
 }
