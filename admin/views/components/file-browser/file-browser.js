@@ -73,7 +73,9 @@ class FileBrowser extends KaskadiElement {
     if (!content) {
       this.path = filePath
     } else {
+      dispatchStatus('downloading...')
       window.open(`${apiUrl}/download?key=${filePath}`)
+      dispatchStatus('ready', 1)
     }
   }
 
