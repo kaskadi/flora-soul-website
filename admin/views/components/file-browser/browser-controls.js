@@ -19,25 +19,6 @@ class BrowserControls extends KaskadiElement {
     }
   }
 
-  static get styles () {
-    return css`
-      :host{
-        display: inline-block;
-      }
-      #controls {
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: center;
-        align-items: center;
-        padding: 10px 0;
-        background: #DDD;
-      }
-      #controls button:not([disabled]):hover {
-        cursor: pointer;
-      }
-    `
-  }
-
   async callApi (url, init, status) {
     dispatchStatus(status)
     await window.fetch(url, init)
@@ -82,14 +63,46 @@ class BrowserControls extends KaskadiElement {
     this.callApi(`${this.apiUrl}/create`, getInit('POST', { key: appendPath(this.path, name) }), 'creating...')
   }
 
+  showOriginalHandler (e) {
+    const event = new CustomEvent('show-original', { detail: e.target.checked })
+    this.dispatchEvent(event)
+  }
+
+  static get styles () {
+    return css`
+      :host{
+        display: inline-block;
+        padding: 10px 0;
+        background: #DDD;
+      }
+      .flex-center {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-items: center;
+        padding: 2px 0;
+      }
+      #controls button:not([disabled]):hover {
+        cursor: pointer;
+      }
+      #original-control input {
+        margin-right: 10px;
+      }
+    `
+  }
+
   render () {
     return html`
-      <div id="controls">
+      <div id="controls" class="flex-center">
         <button @click="${this.uploadHandler}">Upload</button>
         <input id="file-picker" type="file" accept="image/*" @change="${this.filePickHandler}" multiple hidden>
         <button @click="${this.newFolderHandler}">New folder</button>
         <button @click="${this.deleteHandler}" ?disabled="${!this.selectedFile}">Delete</button>
         <button @click="${this.renameHandler}" ?disabled="${!this.selectedFile}">Rename</button>
+      </div>
+      <div id="original-control" class="flex-center">
+        <input type="checkbox" name="show-original" @change="${this.showOriginalHandler}">
+        <label for"show-original">show original images</label>
       </div>
     `
   }

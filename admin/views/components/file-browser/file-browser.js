@@ -16,6 +16,7 @@ class FileBrowser extends KaskadiElement {
     super()
     this.selectedFile = null
     this.path = (new URL(window.location)).searchParams.get('path') || '' // check if a path was provided as query string, else load the root of the folder
+    this.showOriginal = false
     this.dragCounter = 0
     // connect to WebSocket and update files when receiving new data
     this.ws = new WebSocket(`${wsUrl}/ws`)
@@ -40,6 +41,10 @@ class FileBrowser extends KaskadiElement {
       dragCounter: {
         type: Number,
         attribute: false
+      },
+      showOriginal: {
+        type: Boolean,
+        attribute: false
       }
     }
   }
@@ -51,7 +56,7 @@ class FileBrowser extends KaskadiElement {
   }
 
   async navigate (path) {
-    const res = await fetch(`${apiUrl}?path=${path}`)
+    const res = await fetch(`${apiUrl}?path=${this.showOriginal ? '.originals/' : ''}${path}`)
     const { status } = res
     dispatchStatus('loading...')
     if (status === 404) {
@@ -81,6 +86,10 @@ class FileBrowser extends KaskadiElement {
 
   navHandler (e) {
     this.path = e.detail
+  }
+
+  showOriginalHandler (e) {
+    this.showOriginal = e.detail
   }
 
   dragenter (e) {
@@ -130,7 +139,7 @@ class FileBrowser extends KaskadiElement {
   }
 
   updated (changedProperties) {
-    if (changedProperties.has('path')) {
+    if (changedProperties.has('path') || changedProperties.has('showOriginal')) {
       this.navigate(this.path)
     }
   }
@@ -196,7 +205,7 @@ class FileBrowser extends KaskadiElement {
             <div>Drop your files here!</div>
           </div>
         </div>
-        <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${apiUrl}" path="${this.path}"></fs-browser-controls>
+        <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${apiUrl}" path="${this.path}" @show-original="${this.showOriginalHandler}"></fs-browser-controls>
       </div>
       <fs-status></fs-status>
     `
