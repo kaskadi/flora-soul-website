@@ -2,6 +2,7 @@
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
 import appendPath from './utils/append-path.js'
 import { uploadFiles } from './utils/api-utils.js'
+import { chop, add } from './utils/original-paths.js'
 import dispatchStatus from './utils/status-dispatcher.js'
 import './file-list.js'
 import './browser-nav.js'
@@ -143,11 +144,7 @@ class FileBrowser extends KaskadiElement {
       this.navigate(this.path)
     }
     if (changedProperties.has('showOriginal')) {
-      this.path = this.showOriginal
-        ? `.originals${this.path.length === 0 ? '' : '/'}${this.path}`
-        : this.path.split('/').length === 1
-          ? ''
-          : this.path.split('/').slice(1)
+      this.path = this.showOriginal ? add(this.path) : chop(this.path)
     }
   }
 

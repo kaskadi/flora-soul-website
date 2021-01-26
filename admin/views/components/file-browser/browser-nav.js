@@ -1,5 +1,6 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
+import { add, chop } from './utils/original-paths.js'
 
 class BrowserNav extends KaskadiElement {
   constructor () {
@@ -7,7 +8,8 @@ class BrowserNav extends KaskadiElement {
     this.path = ''
     this.showOriginal = false
     this.setPathParts()
-    this.resetHistory()
+    this._history = ['']
+    this._historyPointer = 0
   }
 
   static get properties () {
@@ -23,11 +25,6 @@ class BrowserNav extends KaskadiElement {
 
   setPathParts () {
     this.pathParts = this.path.split('/').filter(part => part.length > 0)
-  }
-
-  resetHistory () {
-    this._history = []
-    this._historyPointer = -1
   }
 
   dispatchNav (detail) {
@@ -64,19 +61,19 @@ class BrowserNav extends KaskadiElement {
         // if we are already at the good path in history (i.e. we navigate via prev/next) then we just stop here
         return
       }
-      if (this._history[this._historyPointer + 1] !== this.path) {
+      this._historyPointer++
+      if (this._history[this._historyPointer] !== this.path) {
         // we only want to push the new path in the history if it's not already the next path in line
         this._history = [
-          ...this._history.slice(0, this._historyPointer + 1),
+          ...this._history.slice(0, this._historyPointer),
           this.path,
-          ...this._history.slice(this._historyPointer + 1)
+          ...this._history.slice(this._historyPointer)
         ]
       }
-      this._historyPointer++
     }
     if (changedProperties.has('showOriginal')) {
-      // everytime we switch between original images and regular images we want to reset the history to not cross between via navigation
-      this.resetHistory()
+      // everytime we switch between original images and regular images we want to replicate the history entry
+      this._history = this._history.map(entry => this.showOriginal ? add(entry) : chop(entry))
     }
   }
 
