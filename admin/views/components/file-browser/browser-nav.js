@@ -7,8 +7,7 @@ class BrowserNav extends KaskadiElement {
     this.path = ''
     this.showOriginal = false
     this.setPathParts()
-    this._history = []
-    this._historyPointer = -1
+    this.resetHistory()
   }
 
   static get properties () {
@@ -24,6 +23,11 @@ class BrowserNav extends KaskadiElement {
 
   setPathParts () {
     this.pathParts = this.path.split('/').filter(part => part.length > 0)
+  }
+
+  resetHistory () {
+    this._history = []
+    this._historyPointer = -1
   }
 
   dispatchNav (detail) {
@@ -69,6 +73,10 @@ class BrowserNav extends KaskadiElement {
         ]
       }
       this._historyPointer++
+    }
+    if (changedProperties.has('showOriginal')) {
+      // everytime we switch between original images and regular images we want to reset the history to not cross between via navigation
+      this.resetHistory()
     }
   }
 
