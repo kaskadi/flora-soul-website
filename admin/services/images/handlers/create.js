@@ -1,4 +1,4 @@
-const { existsSync, mkdirSync } = require('fs')
+const { writeFileSync, existsSync, mkdirSync } = require('fs')
 const { extname } = require('path')
 const sharp = require('sharp')
 const passKey = require('./utils/pass-key.js')
@@ -17,18 +17,12 @@ const mimeSignatures = {
 module.exports = async (req, res, next) => {
   const { content } = req.body
   let { key } = req.body
+  const originalKey = `.originals/${key}`
+  key = key.replace(extname(key), '.webp')
   createStructure(key)
+  createStructure(originalKey)
   if (content) {
-    const fileContent = content.replace(/^data:[a-z]+\/[a-z]+;base64,/, '') // strip off base64 URL header from string to retrieve actual encoded data
-    const bytes = Buffer.from(fileContent, 'base64')
-    const mime = getMime(bytes)
-    if (Object.keys(mimeSignatures).includes(mime) || isSvg(bytes)) {
-      key = key.replace(extname(key), '.webp')
-      await writeAsWebP(bytes, key, mime)
-      res.status(201).send(`File ${key} successfully saved!`)
-    } else {
-      res.status(400).send('Invalid file format: only images are allowed for upload...')
-    }
+    await writeFile(key, originalKey, content, res)
   } else {
     mkdirSync(key)
     res.status(201).send(`File ${key} successfully saved!`)
@@ -43,6 +37,19 @@ function createStructure (key) {
     if (!existsSync(dirPath)) {
       mkdirSync(dirPath)
     }
+  }
+}
+
+async function writeFile (key, originalKey, content, res) {
+  const fileContent = content.replace(/^data:[a-z]+\/[a-z]+;base64,/, '') // strip off base64 URL header from string to retrieve actual encoded data
+  const bytes = Buffer.from(fileContent, 'base64')
+  const mime = getMime(bytes)
+  if (Object.keys(mimeSignatures).includes(mime) || isSvg(bytes)) {
+    await writeAsWebP(bytes, key, mime)
+    res.status(201).send(`File ${key} successfully saved!`)
+    writeFileSync(originalKey, fileContent, 'base64') // write into folder for original images
+  } else {
+    res.status(400).send('Invalid file format: only images are allowed for upload...')
   }
 }
 
