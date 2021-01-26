@@ -56,7 +56,7 @@ class FileBrowser extends KaskadiElement {
   }
 
   async navigate (path) {
-    const res = await fetch(`${apiUrl}?path=${this.showOriginal ? '.originals/' : ''}${path}`)
+    const res = await fetch(`${apiUrl}?path=${path}`)
     const { status } = res
     dispatchStatus('loading...')
     if (status === 404) {
@@ -139,8 +139,15 @@ class FileBrowser extends KaskadiElement {
   }
 
   updated (changedProperties) {
-    if (changedProperties.has('path') || changedProperties.has('showOriginal')) {
+    if (changedProperties.has('path')) {
       this.navigate(this.path)
+    }
+    if (changedProperties.has('showOriginal')) {
+      this.path = this.showOriginal
+        ? `.originals${this.path.length === 0 ? '' : '/'}${this.path}`
+        : this.path.split('/').length === 1
+          ? ''
+          : this.path.split('/').slice(1)
     }
   }
 
@@ -198,14 +205,14 @@ class FileBrowser extends KaskadiElement {
   render () {
     return html`
       <div id="browser">
-        <fs-browser-nav path="${this.path}" @path-nav="${this.navHandler}"></fs-browser-nav>
+        <fs-browser-nav path="${this.path}" ?showOriginal="${this.showOriginal}" @path-nav="${this.navHandler}"></fs-browser-nav>
         <div id="dropbox">
           <fs-file-list @file-select="${this.selectHandler}" @file-open="${this.openHandler}"></fs-file-list>
           <div id="drop-overlay" ?hidden="${this.dragCounter === 0}">
             <div>Drop your files here!</div>
           </div>
         </div>
-        <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${apiUrl}" path="${this.path}" @show-original="${this.showOriginalHandler}"></fs-browser-controls>
+        <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${apiUrl}" path="${this.path}" ?showOriginal="${this.showOriginal}" @show-original="${this.showOriginalHandler}"></fs-browser-controls>
       </div>
       <fs-status></fs-status>
     `

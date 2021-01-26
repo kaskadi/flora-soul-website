@@ -5,6 +5,7 @@ class BrowserNav extends KaskadiElement {
   constructor () {
     super()
     this.path = ''
+    this.showOriginal = false
     this.setPathParts()
     this._history = []
     this._historyPointer = -1
@@ -13,6 +14,7 @@ class BrowserNav extends KaskadiElement {
   static get properties () {
     return {
       path: { type: String },
+      showOriginal: { type: Boolean },
       pathParts: {
         type: Array,
         attribute: false
@@ -119,12 +121,15 @@ class BrowserNav extends KaskadiElement {
     return html`
       <nav class="flex-row">
         <div class="nav-cell flex-row" id="nav-controls">
-          <button @click="${this.upNav}" ?disabled="${this.path.length === 0}">&#11180;</button>
+          <button @click="${this.upNav}" ?disabled="${this.path.length === 0 || (this.showOriginal && this.path.length > 1)}">&#11180;</button>
           <button @click="${this.prevNav}" ?disabled="${this._historyPointer < 1}">&#8592;</button>
           <button @click="${this.nextNav}" ?disabled="${this._historyPointer < 0 || this._historyPointer === this._history.length - 1}">&#8594;</button>
         </div>
         <div class="nav-cell flex-row" id="path-nav">
-          ${createNavPart('Root', 0, this.pathParts.length === 0)}
+          ${!this.showOriginal
+            ? createNavPart('Root', 0, this.pathParts.length === 0)
+            : html`<div></div>`
+          }
           ${this.pathParts.map((part, i) => html`
             ${createNavPart(part, i + 1, i === this.pathParts.length - 1)}
           `)}
