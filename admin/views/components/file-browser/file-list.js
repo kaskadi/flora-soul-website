@@ -26,39 +26,6 @@ class FileList extends KaskadiElement {
     }
   }
 
-  static get styles () {
-    return css`
-      :host{
-        display: inline-block;
-      }
-      #file-viewer {
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: flex-start;
-        align-items: flex-start;
-      }
-      .file {
-        display: flex;
-        flex-flow: column nowrap;
-        justify-content: center;
-        align-items: center;
-        margin: 5px 5px;
-        padding: 5px;
-        user-select: none;
-      }
-      .file:hover {
-        cursor: pointer;
-        background: #DDD;
-      }
-      .file:focus {
-        outline: none;
-      }
-      .selected {
-        background: #DDD;
-      }
-    `
-  }
-
   fileFocus (e) {
     this.focus = e.path[0]
   }
@@ -68,6 +35,7 @@ class FileList extends KaskadiElement {
       detail: getData(e.path[1])
     })
     this.dispatchEvent(event)
+    this.unselectFile()
   }
 
   unselectFile () {
@@ -116,6 +84,55 @@ class FileList extends KaskadiElement {
         oldFocus.classList.remove('selected')
       }
     }
+  }
+
+  static get styles () {
+    return css`
+      :host{
+        display: inline-block;
+      }
+      #file-viewer {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+      .file {
+        box-sizing: border-box;
+        text-align: center;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        margin: 5px 5px;
+        padding: 5px;
+        user-select: none;
+      }
+      .file div {
+        width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .file:hover {
+        cursor: pointer;
+        background: #DDD;
+      }
+      .file:focus {
+        outline: none;
+      }
+      .file:focus div {
+        white-space: unset;
+        overflow: unset;
+        text-overflow: unset;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+      }
+      .selected {
+        background: #DDD;
+      }
+    `
   }
 
   render () {
