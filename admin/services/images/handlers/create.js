@@ -18,10 +18,10 @@ module.exports = async (req, res, next) => {
   const { content } = req.body
   let { key } = req.body
   const originalKey = `.originals/${key}`
-  key = key.replace(extname(key), '.webp')
   createStructure(key)
   createStructure(originalKey)
   if (content) {
+    key = key.replace(extname(key), '.webp')
     await writeFile(key, originalKey, content, res)
   } else {
     mkdirSync(key)
