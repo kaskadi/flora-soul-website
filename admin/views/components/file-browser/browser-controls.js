@@ -8,6 +8,7 @@ class BrowserControls extends KaskadiElement {
   static get properties () {
     return {
       selectedFile: { type: Object },
+      showOriginal: { type: Boolean },
       apiUrl: {
         type: String,
         hasChanged: () => false // no rerender
@@ -94,11 +95,11 @@ class BrowserControls extends KaskadiElement {
   render () {
     return html`
       <div id="controls" class="flex-center">
-        <button @click="${this.uploadHandler}">Upload</button>
+        <button @click="${this.uploadHandler}" ?disabled="${this.showOriginal}">Upload</button>
         <input id="file-picker" type="file" accept="image/*" @change="${this.filePickHandler}" multiple hidden>
-        <button @click="${this.newFolderHandler}">New folder</button>
-        <button @click="${this.deleteHandler}" ?disabled="${!this.selectedFile}">Delete</button>
-        <button @click="${this.renameHandler}" ?disabled="${!this.selectedFile}">Rename</button>
+        <button @click="${this.newFolderHandler}" ?disabled="${this.showOriginal}">New folder</button>
+        <button @click="${this.deleteHandler}" ?disabled="${this.showOriginal || !this.selectedFile}">Delete</button>
+        <button @click="${this.renameHandler}" ?disabled="${this.showOriginal || !this.selectedFile}">Rename</button>
       </div>
       <div id="original-control" class="flex-center">
         <input type="checkbox" name="show-original" @change="${this.showOriginalHandler}">
