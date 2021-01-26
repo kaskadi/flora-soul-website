@@ -25,6 +25,7 @@ module.exports = async (req, res, next) => {
     await writeFile(key, originalKey, content, res)
   } else {
     mkdirSync(key)
+    mkdirSync(originalKey)
     res.status(201).send(`File ${key} successfully saved!`)
   }
   passKey(key, res, next)
