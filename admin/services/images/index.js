@@ -5,7 +5,7 @@ const WebSocket = require('ws')
 const port = 3101
 
 const getFiles = require('./handlers/utils/get-files.js')
-const { dirname } = require('path')
+const { dirname, join } = require('path')
 
 require('dotenv').config()
 
@@ -30,10 +30,16 @@ function broadcast (req, res, next) {
   const { key } = res.locals
   const dir = dirname(key) === '.' ? '' : dirname(key)
   const files = getFiles(dir)
+  const originalFiles = getFiles(join('.originals', dir))
+  emitFiles(files, wss)
+  emitFiles(originalFiles, wss)
+  next()
+}
+
+function emitFiles (files, wss) {
   for (const client of wss.clients) {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(files))
     }
   }
-  next()
 }
