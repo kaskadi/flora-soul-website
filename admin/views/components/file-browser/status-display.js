@@ -37,21 +37,39 @@ class StatusDisplay extends KaskadiElement {
       :host {
         display: inline-block
       }
-      div {
+      #status {
         font-weight: bold;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        height: 24px;
       }
-      div span {
+      #header {
+        margin-right: 5px;
+      }
+      #status-text {
         color: orange;
       }
-      .ready {
+      #status-text.ready {
         color: green;
+      }
+      #status img {
+        margin-left: 5px;
+      }
+      #status img[hidden] {
+        display: none;
       }
     `
   }
 
   render () {
     return html`
-      <div>Status: <span class="${this.status === 1 ? 'ready' : ''}">${this.statusText}<span></div>
+      <div id="status">
+        <div id="header">Status:</div>
+        <div id="status-text" class="${this.status === 1 ? 'ready' : ''}">${this.statusText}</div>
+        <img src="static/spinner.svg" height="24" ?hidden="${this.status === 1}">
+      </div>
     `
   }
 }
