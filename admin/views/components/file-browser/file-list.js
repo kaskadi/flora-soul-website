@@ -38,10 +38,12 @@ class FileList extends KaskadiElement {
     let items = [
       {
         name: 'Upload',
+        icon: 'static/upload.svg',
         handler: handler('upload')
       },
       {
         name: 'New folder',
+        icon: 'static/plus.svg',
         handler: handler('new')
       }
     ]
@@ -51,10 +53,12 @@ class FileList extends KaskadiElement {
       items = [
         {
           name: 'Rename',
+          icon: 'static/pen.svg',
           handler: handler('rename')
         },
         {
           name: 'Delete',
+          icon: 'static/trash.svg',
           handler: handler('delete')
         }
       ]

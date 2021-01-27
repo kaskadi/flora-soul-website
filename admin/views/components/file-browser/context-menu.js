@@ -61,6 +61,10 @@ class ContextMenu extends KaskadiElement {
       }
       #menu div {
         padding: 5px 10px;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+        align-items: center;
       }
       #menu div:hover {
         background: #DDD;
@@ -74,7 +78,8 @@ class ContextMenu extends KaskadiElement {
       <div id="menu" ?hidden="${!this.showMenu}">
         ${this.items.map(item => html`
           <div @click="${this.clickHandler(item.handler)}">
-            ${item.name}
+            ${item.icon ? html`<img src="${item.icon}" height="18">` : ''}
+            <div>${item.name}</div>
           </div>
         `)}
       </div>
