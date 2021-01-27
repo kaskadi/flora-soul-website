@@ -64,6 +64,7 @@ class ContextMenu extends KaskadiElement {
       }
       #menu div:hover {
         background: #DDD;
+        cursor: pointer;
       }
     `
   }
