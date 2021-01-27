@@ -1,5 +1,6 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
+import './context-menu.js'
 
 function getData (file) {
   const src = file.querySelector('img').src
@@ -26,6 +27,44 @@ class FileList extends KaskadiElement {
     }
   }
 
+  openContextMenu (e) {
+    e.preventDefault()
+    const menu = this.shadowRoot.querySelector('fs-context-menu')
+    menu.hide()
+    const handler = op => () => {
+      const event = new CustomEvent('context-action', { detail: op })
+      this.dispatchEvent(event)
+    }
+    let items = [
+      {
+        name: 'Upload',
+        handler: handler('upload')
+      },
+      {
+        name: 'New folder',
+        handler: handler('new')
+      }
+    ]
+    let posX = 0
+    let posY = 0
+    if (this.focus) {
+      items = [
+        {
+          name: 'Rename',
+          handler: handler('rename')
+        },
+        {
+          name: 'Delete',
+          handler: handler('delete')
+        }
+      ]
+      const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = this.focus
+      posX = offsetLeft + offsetWidth / 2
+      posY = offsetTop + offsetHeight / 2
+    }
+    menu.show({ posX, posY }, items)
+  }
+
   fileFocus (e) {
     this.focus = e.path[0]
   }
@@ -39,6 +78,7 @@ class FileList extends KaskadiElement {
   }
 
   unselectFile () {
+    this.shadowRoot.querySelector('fs-context-menu').hide()
     if (this.focus) {
       this.focus.blur()
     }
@@ -96,6 +136,7 @@ class FileList extends KaskadiElement {
         flex-flow: row wrap;
         justify-content: flex-start;
         align-items: flex-start;
+        height: 100%;
       }
       .file {
         box-sizing: border-box;
@@ -137,7 +178,7 @@ class FileList extends KaskadiElement {
 
   render () {
     return html`
-      <div id="file-viewer">
+      <div id="file-viewer" @contextmenu="${this.openContextMenu}">
         ${this.files
           ? this.files.map(file => html`
           <div class="file" tabindex="-1" @focus=${this.fileFocus} @dblclick="${this.fileOpen}">
@@ -146,6 +187,7 @@ class FileList extends KaskadiElement {
           </div>`)
           : html`<div>This destination does not exist</div>`}
       </div>
+      <fs-context-menu></fs-context-menu>
     `
   }
 }

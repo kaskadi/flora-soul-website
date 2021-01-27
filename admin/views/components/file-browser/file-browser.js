@@ -85,6 +85,17 @@ class FileBrowser extends KaskadiElement {
     }
   }
 
+  contextActionHandler (e) {
+    const controls = this.shadowRoot.querySelector('fs-browser-controls')
+    const operations = {
+      upload: controls.uploadHandler.bind(controls),
+      new: controls.newFolderHandler.bind(controls),
+      rename: controls.renameHandler.bind(controls),
+      delete: controls.deleteHandler.bind(controls)
+    }
+    operations[e.detail]()
+  }
+
   navHandler (e) {
     this.path = e.detail
   }
@@ -204,7 +215,7 @@ class FileBrowser extends KaskadiElement {
       <div id="browser">
         <fs-browser-nav path="${this.path}" ?showOriginal="${this.showOriginal}" @path-nav="${this.navHandler}"></fs-browser-nav>
         <div id="dropbox">
-          <fs-file-list @file-select="${this.selectHandler}" @file-open="${this.openHandler}"></fs-file-list>
+          <fs-file-list @file-select="${this.selectHandler}" @file-open="${this.openHandler}" @context-action="${this.contextActionHandler}"></fs-file-list>
           <div id="drop-overlay" ?hidden="${this.dragCounter === 0}">
             <div>Drop your files here!</div>
           </div>

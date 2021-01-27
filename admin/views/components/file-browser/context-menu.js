@@ -5,12 +5,17 @@ class ContextMenu extends KaskadiElement {
   constructor () {
     super()
     this.items = []
+    this.showMenu = false
   }
 
   static get properties () {
     return {
       items: {
         type: Array,
+        attribute: false
+      },
+      showMenu: {
+        type: Boolean,
         attribute: false
       }
     }
@@ -22,20 +27,20 @@ class ContextMenu extends KaskadiElement {
       return
     }
     const menu = this.shadowRoot.querySelector('#menu')
-    menu.style.top = posX
-    menu.style.left = posY
+    menu.style.left = posX
+    menu.style.top = posY
     this.items = items
-    menu.style.display = 'block'
+    this.showMenu = true
   }
 
   hide () {
-    this.shadowRoot.querySelector('#menu').style.display = 'none'
+    this.showMenu = false
   }
 
   clickHandler (handler) {
     return function (e) {
-      handler(e)
       this.hide()
+      handler(e)
     }.bind(this)
   }
 
@@ -45,6 +50,7 @@ class ContextMenu extends KaskadiElement {
         display: inline-block;
       }
       #menu {
+        display: block;
         position: absolute;
         z-index: 1000;
         background: #FFF;
@@ -61,7 +67,7 @@ class ContextMenu extends KaskadiElement {
 
   render () {
     return html`
-      <div id="menu">
+      <div id="menu" ?hidden="${!this.showMenu}">
         ${this.items.map(item => html`
           <div @click="${this.clickHandler(item.handler)}">
             ${item.name}
