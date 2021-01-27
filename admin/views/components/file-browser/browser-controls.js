@@ -30,7 +30,7 @@ class BrowserControls extends KaskadiElement {
     const filePicker = e.target
     const { files } = filePicker
     const { apiUrl, path } = this
-    uploadFiles(files, { apiUrl, path })
+    uploadFiles(files, { apiUrl, path }, filePicker)
   }
 
   uploadHandler () {
