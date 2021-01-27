@@ -119,7 +119,6 @@ class BrowserNav extends KaskadiElement {
   }
 
   render () {
-    console.log(this.path)
     const createNavPart = (part, i, isBold) => html`
       <div>></div>
       <div class="path-part ${isBold ? 'bold' : ''}" data-index="${i}" @click="${this.pathNav}">${part}</div>
