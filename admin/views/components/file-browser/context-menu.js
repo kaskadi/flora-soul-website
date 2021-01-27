@@ -56,6 +56,9 @@ class ContextMenu extends KaskadiElement {
         background: #FFF;
         border: 1px solid black;
       }
+      #menu[hidden] {
+        display: none;
+      }
       #menu div {
         padding: 5px 10px;
       }
