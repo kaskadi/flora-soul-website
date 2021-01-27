@@ -119,6 +119,7 @@ class BrowserNav extends KaskadiElement {
   }
 
   render () {
+    console.log(this.path)
     const createNavPart = (part, i, isBold) => html`
       <div>></div>
       <div class="path-part ${isBold ? 'bold' : ''}" data-index="${i}" @click="${this.pathNav}">${part}</div>
@@ -126,7 +127,7 @@ class BrowserNav extends KaskadiElement {
     return html`
       <nav class="flex-row">
         <div class="nav-cell flex-row" id="nav-controls">
-          <button @click="${this.upNav}" ?disabled="${this.path.length === 0 || (this.showOriginal && this.path.length === 1)}">&#11180;</button>
+          <button @click="${this.upNav}" ?disabled="${this.path.length === 0 || (this.showOriginal && this.path === '.originals')}">&#11180;</button>
           <button @click="${this.prevNav}" ?disabled="${this._historyPointer < 1}">&#8592;</button>
           <button @click="${this.nextNav}" ?disabled="${this._historyPointer < 0 || this._historyPointer === this._history.length - 1}">&#8594;</button>
         </div>
