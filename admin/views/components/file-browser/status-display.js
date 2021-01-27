@@ -18,6 +18,11 @@ class StatusDisplay extends KaskadiElement {
   statusUpdate (e) {
     this.statusText = e.detail.statusText
     this.status = e.detail.status
+    if (this.status !== 1) {
+      document.body.style.cursor = 'wait'
+    } else {
+      document.body.style.cursor = 'auto'
+    }
   }
 
   connectedCallback () {
