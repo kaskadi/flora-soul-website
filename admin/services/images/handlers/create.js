@@ -1,5 +1,4 @@
 const { writeFileSync, existsSync, mkdirSync } = require('fs')
-const { extname } = require('path')
 const sharp = require('sharp')
 const passKey = require('./utils/pass-key.js')
 
@@ -15,13 +14,11 @@ const mimeSignatures = {
 }
 
 module.exports = async (req, res, next) => {
-  const { content } = req.body
-  let { key } = req.body
+  const { key, content } = req.body
   const originalKey = `.originals/${key}`
   createStructure(key)
   createStructure(originalKey)
   if (content) {
-    key = key.replace(extname(key), '.webp')
     await writeFile(key, originalKey, content, res)
   } else {
     mkdirSync(key)
@@ -93,5 +90,5 @@ function writeAsWebP (bytes, key, mime) {
         lossless: true
       }
     )
-    .toFile(key)
+    .toFile(`${key}.webp`)
 }
