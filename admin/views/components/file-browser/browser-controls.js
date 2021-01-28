@@ -86,8 +86,52 @@ class BrowserControls extends KaskadiElement {
       #controls button:not([disabled]):hover {
         cursor: pointer;
       }
-      #original-control input {
+      #original-control .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 24px;
         margin-right: 10px;
+      }
+      #original-control .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      #original-control .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 24px;
+        background-color: #ccc;
+        -webkit-transition: 0.2s;
+        transition: 0.2s;
+      }
+      #original-control .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        bottom: 4px;
+        border-radius: 50%;
+        background-color: white;
+        -webkit-transition: 0.2s;
+        transition: 0.2s;
+      }
+      #original-control input:checked + .slider {
+        background-color: #2196F3;
+      }
+      #original-control input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+      }
+      #original-control input:checked + .slider:before {
+        -webkit-transform: translateX(16px);
+        -ms-transform: translateX(16px);
+        transform: translateX(16px);
       }
     `
   }
@@ -102,7 +146,10 @@ class BrowserControls extends KaskadiElement {
         <button @click="${this.renameHandler}" ?disabled="${this.showOriginal || !this.selectedFile}">Rename</button>
       </div>
       <div id="original-control" class="flex-center">
-        <input type="checkbox" name="show-original" @change="${this.showOriginalHandler}">
+        <label class="switch">
+          <input type="checkbox" name="show-original" @change="${this.showOriginalHandler}">
+          <span class="slider"></span>
+        </label>
         <label for"show-original">show originals</label>
       </div>
     `
