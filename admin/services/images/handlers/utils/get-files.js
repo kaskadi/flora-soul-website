@@ -8,6 +8,7 @@ module.exports = (dir = '') => {
   }
   return {
     dir: dir.replace(process.cwd(), ''),
+    publicUrl: process.env.PUBLIC_URL,
     files: readdirSync(dir)
       .filter(filterFiles)
       .map(getData(dir))
