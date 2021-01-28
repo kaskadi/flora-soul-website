@@ -3,10 +3,9 @@ import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/
 import './context-menu.js'
 
 function getData (file) {
-  const src = file.querySelector('img').src
   return {
-    key: file.querySelector('div').textContent.trim(),
-    content: src.startsWith('data:') ? src : null
+    key: file.getAttribute('data-key'),
+    content: file.getAttribute('data-content')
   }
 }
 
@@ -202,11 +201,16 @@ class FileList extends KaskadiElement {
     return html`
       <div id="file-viewer" @contextmenu="${this.openContextMenu}">
         ${this.files
-          ? this.files.map(file => html`
-            <div class="file" tabindex="-1" @focus=${this.fileFocus} @dblclick="${this.fileOpen}">
-              <img src="${getThumbnail(file.content)}" height="40">
-              <div>${file.key}</div>
-            </div>`)
+          ? this.files.map(file => {
+            const { content } = file
+            let { key } = file
+            key = key.trim()
+            return html`
+              <div class="file" tabindex="-1" @focus=${this.fileFocus} @dblclick="${this.fileOpen}" data-content="${content}" data-key="${key}">
+                <img src="${getThumbnail(content)}" height="40">
+                <div>${key}</div>
+              </div>`
+            })
           : html`<div>This destination does not exist</div>`}
       </div>
       <fs-context-menu></fs-context-menu>
