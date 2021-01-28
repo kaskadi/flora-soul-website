@@ -96,7 +96,7 @@ class BrowserControls extends KaskadiElement {
     return html`
       <div id="controls" class="flex-center">
         <button @click="${this.uploadHandler}" ?disabled="${this.showOriginal}">Upload</button>
-        <input id="file-picker" type="file" accept="image/*" @change="${this.filePickHandler}" multiple hidden>
+        <input id="file-picker" type="file" accept="image/*, application/pdf" @change="${this.filePickHandler}" multiple hidden>
         <button @click="${this.newFolderHandler}" ?disabled="${this.showOriginal}">New folder</button>
         <button @click="${this.deleteHandler}" ?disabled="${this.showOriginal || !this.selectedFile}">Delete</button>
         <button @click="${this.renameHandler}" ?disabled="${this.showOriginal || !this.selectedFile}">Rename</button>
