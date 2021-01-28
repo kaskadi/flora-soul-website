@@ -1,6 +1,6 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
-import appendPath from './utils/append-path.js'
+import join from './utils/join.js'
 import { getInit, uploadFiles } from './utils/api-utils.js'
 import dispatchStatus from './utils/status-dispatcher.js'
 
@@ -42,7 +42,7 @@ class BrowserControls extends KaskadiElement {
     if (!window.confirm(`Do you really want to delete ${key}?`)) {
       return
     }
-    const filePath = appendPath(this.path, key)
+    const filePath = join(this.path, key)
     this.callApi(`${this.apiUrl}/delete`, getInit('POST', { key: filePath }), 'deleting...')
   }
 
@@ -51,8 +51,8 @@ class BrowserControls extends KaskadiElement {
     if (!key) {
       return
     }
-    key = appendPath(this.path, key)
-    const oldKey = appendPath(this.path, this.selectedFile.key)
+    key = join(this.path, key)
+    const oldKey = join(this.path, this.selectedFile.key)
     this.callApi(`${this.apiUrl}/rename`, getInit('POST', { oldKey, key }), 'renaming...')
   }
 
@@ -61,7 +61,7 @@ class BrowserControls extends KaskadiElement {
     if (!name) {
       return
     }
-    this.callApi(`${this.apiUrl}/create`, getInit('POST', { key: appendPath(this.path, name) }), 'creating...')
+    this.callApi(`${this.apiUrl}/create`, getInit('POST', { key: join(this.path, name) }), 'creating...')
   }
 
   showOriginalHandler (e) {

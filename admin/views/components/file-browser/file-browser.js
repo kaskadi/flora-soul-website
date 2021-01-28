@@ -1,6 +1,6 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
-import appendPath from './utils/append-path.js'
+import join from './utils/join.js'
 import { uploadFiles } from './utils/api-utils.js'
 import { chop, add } from './utils/original-paths.js'
 import dispatchStatus from './utils/status-dispatcher.js'
@@ -73,7 +73,7 @@ class FileBrowser extends KaskadiElement {
 
   openHandler (e) {
     const { content, key } = e.detail
-    const filePath = appendPath(this.path, key)
+    const filePath = join(this.path, key)
     if (!content) {
       this.path = filePath
     } else {
@@ -91,7 +91,7 @@ class FileBrowser extends KaskadiElement {
       rename: controls.renameHandler.bind(controls),
       delete: controls.deleteHandler.bind(controls),
       'copy-url': function () {
-        return navigator.clipboard.writeText(`${this.publicUrl}/${this.path}/${this.selectedFile.key}`)
+        return navigator.clipboard.writeText(join(this.publicUrl, this.path, this.selectedFile.key))
       }.bind(this)
     }
     await operations[e.detail]()

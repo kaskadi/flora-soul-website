@@ -1,4 +1,4 @@
-import appendPath from './append-path.js'
+import join from './join.js'
 import dispatchStatus from './status-dispatcher.js'
 
 export function getInit (method, body) {
@@ -19,7 +19,7 @@ export function uploadFiles (files, opts, filePicker) {
   for (const file of filesArray) {
     const reader = new window.FileReader()
     const loadHandler = async function (e) {
-      const key = appendPath(opts.path, file.name)
+      const key = join(opts.path, file.name)
       const content = e.target.result
       const res = await window.fetch(`${opts.apiUrl}/create`, getInit('POST', { key, content }))
       fileIndex++
