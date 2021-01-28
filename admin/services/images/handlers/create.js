@@ -3,8 +3,10 @@ const sharp = require('sharp')
 const FileType = require('file-type')
 const passKey = require('./utils/pass-key.js')
 
-const imageMimes = ['bmp', 'gif', 'vnd.microsoft.icon', 'jpeg', 'png', 'svg+xml', 'tiff', 'webp'].map(mime => `image/${mime}`)
-const acceptedMimes = [...imageMimes]
+const mapMime = namespace => mime => `${namespace}/${mime}`
+const imageMimes = ['bmp', 'gif', 'vnd.microsoft.icon', 'jpeg', 'png', 'svg+xml', 'tiff', 'webp'].map(mapMime('image'))
+const applicationMimes = ['pdf'].map(mapMime('application'))
+const acceptedMimes = [...imageMimes, ...applicationMimes]
 
 module.exports = async (req, res, next) => {
   const { key, content } = req.body
@@ -34,13 +36,18 @@ function createStructure (key) {
 async function writeFile (key, originalKey, content, res) {
   const fileContent = content.replace(/^data:[a-z]+\/[a-z]+;base64,/, '') // strip off base64 URL header from string to retrieve actual encoded data
   const bytes = Buffer.from(fileContent, 'base64')
-  const { mime } = await FileType.fromBuffer(bytes) || {} // we provide an empty object as fallback for when we can't detect mime type which happens mostly for non-binary files
-  if (acceptedMimes.includes(mime) || isSvg(bytes)) {
-    await writeAsWebP(bytes, key, mime)
+  let { mime } = await FileType.fromBuffer(bytes) || {} // we provide an empty object as fallback for when we can't detect mime type which happens mostly for non-binary files
+  mime = mime || isSvg(bytes)
+  if (acceptedMimes.includes(mime)) {
+    if (imageMimes.includes(mime)) {
+      await writeAsWebP(bytes, key, mime)
+    } else {
+      writeFileSync(key, fileContent, 'base64')
+    }
     res.status(201).send(`File ${key} successfully saved!`)
     writeFileSync(originalKey, fileContent, 'base64') // write into folder for original images
   } else {
-    res.status(400).send('Invalid file format: only images are allowed for upload...')
+    res.status(400).send('Invalid file format...')
   }
 }
 
@@ -50,7 +57,7 @@ function isSvg (bytes) {
   for (let i = 0; i < len; i++) {
     binary += String.fromCharCode(bytes[i])
   }
-  return binary.startsWith('<svg')
+  return binary.startsWith('<svg') ? 'image/svg+xml' : undefined
 }
 
 function writeAsWebP (bytes, key, mime) {
