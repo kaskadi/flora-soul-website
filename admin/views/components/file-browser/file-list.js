@@ -3,9 +3,10 @@ import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/
 import './context-menu.js'
 
 function getData (file) {
+  const content = file.getAttribute('data-content')
   return {
     key: file.getAttribute('data-key'),
-    content: file.getAttribute('data-content')
+    content: content !== 'null' ? content : null
   }
 }
 
