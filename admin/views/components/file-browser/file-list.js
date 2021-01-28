@@ -116,12 +116,14 @@ class FileList extends KaskadiElement {
     super.connectedCallback()
     window.addEventListener('keydown', this.unselectFileKey.bind(this))
     this.addEventListener('click', this.unselectFileClick.bind(this))
+    this.addEventListener('contextmenu', this.openContextMenu.bind(this))
   }
 
   disconnectedCallback () {
     super.disconnectedCallback()
     window.removeEventListener('keydown', this.unselectFileKey)
     this.removeEventListener('click', this.unselectFileClick)
+    this.removeEventListener('contextmenu', this.openContextMenu)
   }
 
   updated (changedProperties) {
@@ -151,7 +153,6 @@ class FileList extends KaskadiElement {
         flex-flow: row wrap;
         justify-content: flex-start;
         align-items: flex-start;
-        height: 100%;
       }
       .file {
         box-sizing: border-box;
@@ -199,7 +200,7 @@ class FileList extends KaskadiElement {
       return content
     }
     return html`
-      <div id="file-viewer" @contextmenu="${this.openContextMenu}">
+      <div id="file-viewer">
         ${this.files
           ? this.files.map(file => {
             const { content } = file
