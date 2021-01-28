@@ -66,6 +66,11 @@ class FileList extends KaskadiElement {
           name: 'Delete',
           icon: 'static/trash.svg',
           handler: handler('delete')
+        },
+        {
+          name: 'Copy URL',
+          icon: 'static/link.svg',
+          handler: handler('copy-url')
         }
       ]
       const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = this.focus
