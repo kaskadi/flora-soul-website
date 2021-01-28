@@ -1,18 +1,18 @@
 const { readdirSync, readFileSync, statSync } = require('fs')
 const { join } = require('path')
-const { lookup } = require('mime-types')
+const FileType = require('file-type')
 
-module.exports = (dir = '') => {
+module.exports = async (dir = '') => {
   if (dir.length === 0) {
     dir = process.cwd()
   }
+  const files = readdirSync(dir)
+    .filter(filterFiles)
+    .map(getData(dir))
   return {
     dir: dir.replace(process.cwd(), ''),
     publicUrl: process.env.PUBLIC_URL,
-    files: readdirSync(dir)
-      .filter(filterFiles)
-      .map(getData(dir))
-      .sort(sortFiles)
+    files: (await Promise.all(files)).sort(sortFiles)
   }
 }
 
@@ -22,11 +22,11 @@ function filterFiles (file) {
 }
 
 function getData (dir) {
-  return file => {
+  return async file => {
     const filePath = join(dir, file)
     return {
       key: file,
-      content: statSync(filePath).isDirectory() ? null : getContent(filePath)
+      content: statSync(filePath).isDirectory() ? null : await getContent(filePath)
     }
   }
 }
@@ -43,6 +43,7 @@ function sortFiles (fileA, fileB) {
   }
 }
 
-function getContent (file) {
-  return `data:${lookup(file)};base64,${readFileSync(file, 'base64')}`
+async function getContent (file) {
+  const { mime } = await FileType.fromFile(file)
+  return `data:${mime};base64,${readFileSync(file, 'base64')}`
 }

@@ -26,11 +26,11 @@ const server = app.listen(port, () => {
 
 const wss = new WebSocket.Server({ server, path: '/ws' })
 
-function broadcast (req, res, next) {
+async function broadcast (req, res, next) {
   const { key } = res.locals
   const dir = dirname(key) === '.' ? '' : dirname(key)
-  const files = getFiles(dir)
-  const originalFiles = getFiles(join('.originals', dir))
+  const files = await getFiles(dir)
+  const originalFiles = await getFiles(join('.originals', dir))
   emitFiles(files, wss)
   emitFiles(originalFiles, wss)
   next()
