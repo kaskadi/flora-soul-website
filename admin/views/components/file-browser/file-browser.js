@@ -47,9 +47,10 @@ class FileBrowser extends KaskadiElement {
     }
   }
 
-  updateFiles (files) {
+  updateFiles (files, publicUrl = this.publicUrl) {
     // reset focus
     this.shadowRoot.querySelector('fs-file-list').focus = null
+    this.publicUrl = publicUrl
     this.shadowRoot.querySelector('fs-file-list').files = files
   }
 
@@ -60,8 +61,8 @@ class FileBrowser extends KaskadiElement {
     if (status === 404) {
       this.updateFiles(null)
     } else if (status === 200) {
-      const { files } = await res.json()
-      this.updateFiles(files)
+      const { files, publicUrl } = await res.json()
+      this.updateFiles(files, publicUrl)
     }
     dispatchStatus('ready', 1)
   }
@@ -82,15 +83,18 @@ class FileBrowser extends KaskadiElement {
     }
   }
 
-  contextActionHandler (e) {
+  async contextActionHandler (e) {
     const controls = this.shadowRoot.querySelector('fs-browser-controls')
     const operations = {
       upload: controls.uploadHandler.bind(controls),
       new: controls.newFolderHandler.bind(controls),
       rename: controls.renameHandler.bind(controls),
-      delete: controls.deleteHandler.bind(controls)
+      delete: controls.deleteHandler.bind(controls),
+      'copy-url': function () {
+        return navigator.clipboard.writeText(`${this.publicUrl}/${this.path}/${this.selectedFile.key}`)
+      }.bind(this)
     }
-    operations[e.detail]()
+    await operations[e.detail]()
   }
 
   navHandler (e) {
@@ -136,9 +140,9 @@ class FileBrowser extends KaskadiElement {
     // connect to WebSocket and update files when receiving new data. This needs to be here and not in the constructor because we need the data from this.wsUrl
     this.ws = new WebSocket(`${this.wsUrl}/ws`)
     this.ws.addEventListener('message', function (e) {
-      const { files, dir } = JSON.parse(e.data)
+      const { files, dir, publicUrl } = JSON.parse(e.data)
       if (this.path === dir) {
-        this.updateFiles(files)
+        this.updateFiles(files, publicUrl)
       }
     }.bind(this))
   }
