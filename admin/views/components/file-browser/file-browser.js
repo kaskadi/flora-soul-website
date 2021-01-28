@@ -9,9 +9,6 @@ import './browser-nav.js'
 import './browser-controls.js'
 import './status-display.js'
 
-const apiUrl = 'http://localhost:3101'
-const wsUrl = 'ws://localhost:3101'
-
 class FileBrowser extends KaskadiElement {
   constructor () {
     super()
@@ -19,18 +16,18 @@ class FileBrowser extends KaskadiElement {
     this.path = (new URL(window.location)).searchParams.get('path') || '' // check if a path was provided as query string, else load the root of the folder
     this.showOriginal = false
     this.dragCounter = 0
-    // connect to WebSocket and update files when receiving new data
-    this.ws = new WebSocket(`${wsUrl}/ws`)
-    this.ws.addEventListener('message', function (e) {
-      const { files, dir } = JSON.parse(e.data)
-      if (this.path === dir) {
-        this.updateFiles(files)
-      }
-    }.bind(this))
   }
 
   static get properties () {
     return {
+      apiUrl: {
+        type: String,
+        attribute: 'api-url'
+      },
+      wsUrl: {
+        type: String,
+        attribute: 'web-socket-url'
+      },
       selectedFile: {
         type: Object,
         attribute: false
@@ -57,7 +54,7 @@ class FileBrowser extends KaskadiElement {
   }
 
   async navigate (path) {
-    const res = await fetch(`${apiUrl}?path=${path}`)
+    const res = await fetch(`${this.apiUrl}?path=${path}`)
     const { status } = res
     dispatchStatus('loading...')
     if (status === 404) {
@@ -80,7 +77,7 @@ class FileBrowser extends KaskadiElement {
       this.path = filePath
     } else {
       dispatchStatus('downloading...')
-      window.open(`${apiUrl}/download?key=${filePath}`)
+      window.open(`${this.apiUrl}/download?key=${filePath}`)
       dispatchStatus('ready', 1)
     }
   }
@@ -125,7 +122,7 @@ class FileBrowser extends KaskadiElement {
     e.stopPropagation()
     e.preventDefault()
     this.dragCounter = 0
-    const { path } = this
+    const { apiUrl, path } = this
     uploadFiles(e.dataTransfer.files, { apiUrl, path })
   }
 
@@ -136,6 +133,14 @@ class FileBrowser extends KaskadiElement {
     dropbox.addEventListener('dragover', this.dragover.bind(this), false)
     dropbox.addEventListener('dragleave', this.dragleave.bind(this), false)
     dropbox.addEventListener('drop', this.drop.bind(this), false)
+    // connect to WebSocket and update files when receiving new data. This needs to be here and not in the constructor because we need the data from this.wsUrl
+    this.ws = new WebSocket(`${this.wsUrl}/ws`)
+    this.ws.addEventListener('message', function (e) {
+      const { files, dir } = JSON.parse(e.data)
+      if (this.path === dir) {
+        this.updateFiles(files)
+      }
+    }.bind(this))
   }
 
   disconnectedCallback () {
@@ -220,7 +225,7 @@ class FileBrowser extends KaskadiElement {
             <div>Drop your files here!</div>
           </div>
         </div>
-        <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${apiUrl}" path="${this.path}" ?showOriginal="${this.showOriginal}" @show-original="${this.showOriginalHandler}"></fs-browser-controls>
+        <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${this.apiUrl}" path="${this.path}" ?showOriginal="${this.showOriginal}" @show-original="${this.showOriginalHandler}"></fs-browser-controls>
       </div>
       <fs-status></fs-status>
     `
