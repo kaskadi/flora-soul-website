@@ -103,7 +103,7 @@ class BrowserControls extends KaskadiElement {
       </div>
       <div id="original-control" class="flex-center">
         <input type="checkbox" name="show-original" @change="${this.showOriginalHandler}">
-        <label for"show-original">show original images</label>
+        <label for"show-original">show originals</label>
       </div>
     `
   }
