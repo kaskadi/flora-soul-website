@@ -22,10 +22,9 @@ class ContextMenu extends KaskadiElement {
   }
 
   show ({ posX, posY }, items) {
-    if (isNaN(posX) || isNaN(posY)) {
-      // only show if we pass number for positions
-      return
-    }
+    if (isNaN(posX) || isNaN(posY)) return // only show if we pass number for positions
+    items = items.filter(item => item.when)
+    if (items.length === 0) return // only show if there is at least 1 item to show
     const menu = this.shadowRoot.querySelector('#menu')
     menu.style.left = posX
     menu.style.top = posY
@@ -76,12 +75,13 @@ class ContextMenu extends KaskadiElement {
   render () {
     return html`
       <div id="menu" ?hidden="${!this.showMenu}">
-        ${this.items.map(item => html`
-          <div @click="${this.clickHandler(item.handler)}">
-            ${item.icon ? html`<img src="${item.icon}" height="18">` : ''}
-            <div>${item.name}</div>
-          </div>
-        `)}
+        ${this.items
+          .map(item => html`
+            <div @click="${this.clickHandler(item.handler)}">
+              ${item.icon ? html`<img src="${item.icon}" height="18">` : ''}
+              <div>${item.name}</div>
+            </div>
+          `)}
       </div>
     `
   }

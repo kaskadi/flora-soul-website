@@ -34,23 +34,21 @@ class FileList extends KaskadiElement {
 
   openContextMenu (e) {
     e.preventDefault()
-    if (this.path.startsWith('.originals')) return
     const menu = this.shadowRoot.querySelector('fs-context-menu')
     menu.hide()
-    const handler = op => () => {
-      const event = new CustomEvent('context-action', { detail: op })
-      this.dispatchEvent(event)
-    }
+    const dispatchAction = action => () => this.dispatchEvent(new CustomEvent('context-action', { detail: action }))
     let items = [
       {
         name: 'Upload',
         icon: 'static/upload.svg',
-        handler: handler('upload')
+        handler: dispatchAction('upload'),
+        when: !this.path.startsWith('.originals')
       },
       {
         name: 'New folder',
         icon: 'static/plus.svg',
-        handler: handler('new')
+        handler: dispatchAction('new'),
+        when: !this.path.startsWith('.originals')
       }
     ]
     let posX = 0
@@ -60,17 +58,20 @@ class FileList extends KaskadiElement {
         {
           name: 'Rename',
           icon: 'static/pen.svg',
-          handler: handler('rename')
+          handler: dispatchAction('rename'),
+          when: !this.path.startsWith('.originals')
         },
         {
           name: 'Delete',
           icon: 'static/trash.svg',
-          handler: handler('delete')
+          handler: dispatchAction('delete'),
+          when: !this.path.startsWith('.originals')
         },
         {
           name: 'Copy URL',
           icon: 'static/link.svg',
-          handler: handler('copy-url')
+          handler: dispatchAction('copy-url'),
+          when: getData(this.focus).content !== null
         }
       ]
       const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = this.focus
