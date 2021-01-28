@@ -193,14 +193,20 @@ class FileList extends KaskadiElement {
   }
 
   render () {
+    const getThumbnail = content => {
+      if (content === null) return 'static/folder.svg'
+      const mime = content.split(';')[0].replace('data:', '')
+      if (mime === 'application/pdf') return 'static/pdf.svg'
+      return content
+    }
     return html`
       <div id="file-viewer" @contextmenu="${this.openContextMenu}">
         ${this.files
           ? this.files.map(file => html`
-          <div class="file" tabindex="-1" @focus=${this.fileFocus} @dblclick="${this.fileOpen}">
-            <img src="${file.content || 'static/folder.svg'}" height="40">
-            <div>${file.key}</div>
-          </div>`)
+            <div class="file" tabindex="-1" @focus=${this.fileFocus} @dblclick="${this.fileOpen}">
+              <img src="${getThumbnail(file.content)}" height="40">
+              <div>${file.key}</div>
+            </div>`)
           : html`<div>This destination does not exist</div>`}
       </div>
       <fs-context-menu></fs-context-menu>
