@@ -39,7 +39,8 @@ async function writeFile (key, originalKey, content, res) {
   let { mime } = await FileType.fromBuffer(bytes) || {} // we provide an empty object as fallback for when we can't detect mime type which happens mostly for non-binary files
   mime = mime || isSvg(bytes)
   if (acceptedMimes.includes(mime)) {
-    if (imageMimes.includes(mime)) {
+    if (imageMimes.includes(mime) && mime !== 'image/webp') {
+      // we convert images to webp
       await writeAsWebP(bytes, key, mime)
     } else {
       writeFileSync(key, fileContent, 'base64')
