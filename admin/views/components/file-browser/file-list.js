@@ -15,6 +15,7 @@ class FileList extends KaskadiElement {
     super()
     this.files = []
     this.focus = null
+    this.path = ''
   }
 
   static get properties () {
@@ -23,12 +24,17 @@ class FileList extends KaskadiElement {
       focus: {
         type: Object,
         attribute: false
+      },
+      path: {
+        type: String,
+        hasChanged: () => false // no rerender
       }
     }
   }
 
   openContextMenu (e) {
     e.preventDefault()
+    if (this.path.startsWith('.originals')) return
     const menu = this.shadowRoot.querySelector('fs-context-menu')
     menu.hide()
     const handler = op => () => {

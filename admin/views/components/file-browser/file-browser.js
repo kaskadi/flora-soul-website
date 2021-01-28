@@ -220,7 +220,7 @@ class FileBrowser extends KaskadiElement {
       <div id="browser">
         <fs-browser-nav path="${this.path}" ?showOriginal="${this.showOriginal}" @path-nav="${this.navHandler}"></fs-browser-nav>
         <div id="dropbox">
-          <fs-file-list @file-select="${this.selectHandler}" @file-open="${this.openHandler}" @context-action="${this.contextActionHandler}"></fs-file-list>
+          <fs-file-list path="${this.path}" @file-select="${this.selectHandler}" @file-open="${this.openHandler}" @context-action="${this.contextActionHandler}"></fs-file-list>
           <div id="drop-overlay" ?hidden="${this.dragCounter === 0}">
             <div>Drop your files here!</div>
           </div>
