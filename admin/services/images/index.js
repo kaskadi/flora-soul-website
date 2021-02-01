@@ -7,7 +7,7 @@ const port = 3110
 const getFiles = require('./handlers/utils/get-files.js')
 const { dirname, join } = require('path')
 
-require('dotenv').config()
+require('dotenv').config({ path: join(__dirname, '.env') })
 
 app.use(express.json({ limit: '25mb', extended: false }))
 app.use(cors())
