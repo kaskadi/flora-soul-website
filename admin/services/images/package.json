@@ -1,0 +1,33 @@
+{
+  "name": "images",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "echo \"Please use npm run install:prod and npm run start:prod to start the image API. This will require root privileges!\"",
+    "install:prod": "kaskadi service install -n flora-soul-admin-img-api -u www-data -e $PWD/index.js -r",
+    "start:prod": "sudo systemctl restart flora-soul-admin-img-api",
+    "start:dev": "nodemon index.js",
+    "start:cdn": "nodemon static-server.js"
+  },
+  "keywords": [],
+  "author": "Klimapartner GmbH <kontakt@klimapartner.de> (https://klimapartner.de)",
+  "contributors": [
+    "Holger Will <h.will@klimapartner.de>",
+    "Alexis Lemaire <a.lemaire@klimapartner.de>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "file-type": "^16.2.0",
+    "kaskadi-cli": "^1.8.3",
+    "sharp": "^0.27.0",
+    "ws": "^7.4.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}

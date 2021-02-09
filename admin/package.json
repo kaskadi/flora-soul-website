@@ -1,0 +1,30 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./start.sh",
+    "start:dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "Klimapartner GmbH <kontakt@klimapartner.de> (https://klimapartner.de)",
+  "contributors": [
+    "Holger Will <h.will@klimapartner.de>",
+    "Alexis Lemaire <a.lemaire@klimapartner.de>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-kaskadi-verify": "^1.0.3",
+    "kaskadi-cli": "^1.8.3",
+    "pug": "^3.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1",
+    "nodemon": "^2.0.7",
+    "standard": "^16.0.3"
+  }
+}

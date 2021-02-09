@@ -1,0 +1,8 @@
+extends includes/layout.pug
+
+block scripts
+  script(type="module", src="components/file-browser/file-browser.js")
+
+block content
+  a(href="/") Home
+  fs-file-browser(api-url="http://localhost:3110", web-socket-url="ws://localhost:3110")
