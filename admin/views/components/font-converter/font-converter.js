@@ -72,6 +72,10 @@ class FontConverter extends KaskadiElement {
         cursor: pointer;
       }
       #note {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
         font-style: italic;
         margin-top: 15px;
       }
@@ -84,7 +88,10 @@ class FontConverter extends KaskadiElement {
         <h1>Font converter</h1>
         <button @click="${this.uploadHandler}">Start converting!</button>
         <input id="file-picker" type="file" accept="font/*" @change="${this.filePickHandler}" hidden>
-        <div id="note">Supports .ttf, .woff, .woff2, .svg</div>
+        <div id="note">
+          <div>Supports .ttf, .woff, .woff2, .svg</div>
+          <div>Outputs .ttf, .woff, .woff2, .svg, .eot, .otf</div>
+        </div>
       </div>
     `
   }
