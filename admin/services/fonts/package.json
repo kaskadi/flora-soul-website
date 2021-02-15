@@ -21,6 +21,7 @@
     "archiver": "^5.2.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "file-type": "^16.2.0",
     "font-converter": "^1.1.1",
     "kaskadi-cli": "^1.8.3"
   },
