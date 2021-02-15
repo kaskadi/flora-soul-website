@@ -1,0 +1,8 @@
+extends includes/layout.pug
+
+block scripts
+  script(type="module", src="components/font-converter/font-converter.js")
+
+block content
+  a(href="/") Home
+  fs-font-converter(api-url="http://localhost:3120")
