@@ -90,7 +90,7 @@ class FontConverter extends KaskadiElement {
         <input id="file-picker" type="file" accept="font/*" @change="${this.filePickHandler}" hidden>
         <div id="note">
           <div>Supports .ttf, .woff, .woff2, .svg</div>
-          <div>Outputs .ttf, .woff, .woff2, .svg, .eot, .otf</div>
+          <div>Will download an archive (.zip) containing the original font in the following formats: .ttf, .woff, .woff2, .svg, .eot, .otf</div>
         </div>
       </div>
     `
