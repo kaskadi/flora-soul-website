@@ -54,13 +54,33 @@ class FontConverter extends KaskadiElement {
         display: block;
         user-select: none;
       }
+      #converter {
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 500px;
+      }
+      #converter h1 {
+        color: rebeccapurple;
+      }
+      #converter button {
+        font-size: 24px;
+      }
+      #converter button:hover {
+        cursor: pointer;
+      }
     `
   }
 
   render () {
     return html`
-      <button @click="${this.uploadHandler}">Convert!</button>
-      <input id="file-picker" type="file" accept="font/*" @change="${this.filePickHandler}" hidden>
+      <div id="converter">
+        <h1>Font converter</h1>
+        <button @click="${this.uploadHandler}">Start converting!</button>
+        <input id="file-picker" type="file" accept="font/*" @change="${this.filePickHandler}" hidden>
+      </div>
     `
   }
 }
