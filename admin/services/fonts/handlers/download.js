@@ -1,5 +1,5 @@
 const { unlinkSync } = require('fs')
-const fontFormats = ['ttf', 'woff', 'woff2', 'otf']
+const fontFormats = ['ttf', 'woff', 'woff2', 'otf', 'eot', 'svg']
 
 module.exports = (req, res) => {
   res.download('fonts.zip', 'fonts.zip', clean)

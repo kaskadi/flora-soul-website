@@ -1,8 +1,8 @@
 const { writeFileSync, createWriteStream } = require('fs')
 const archiver = require('archiver')
 
-const fontFormats = ['ttf', 'woff', 'woff2', 'otf']
-const acceptedMimes = fontFormats.map(format => `font/${format}`)
+const fontFormats = ['ttf', 'woff', 'woff2', 'otf', 'eot', 'svg']
+const acceptedMimes = ['font/ttf', 'font/woff', 'font/woff2', 'font/otf', 'application/vnd.ms-fontobject', 'image/svg+xml']
 
 module.exports = async (req, res) => {
   const { data } = req.body
