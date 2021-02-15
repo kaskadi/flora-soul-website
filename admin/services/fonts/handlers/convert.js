@@ -1,4 +1,5 @@
 const { writeFileSync, createWriteStream } = require('fs')
+const FileType = require('file-type')
 const archiver = require('archiver')
 
 const fontFormats = ['ttf', 'woff', 'woff2', 'otf', 'eot', 'svg']
@@ -7,7 +8,7 @@ const acceptedMimes = ['font/ttf', 'font/woff', 'font/woff2', 'font/otf', 'appli
 module.exports = async (req, res) => {
   const { data } = req.body
   const [header, content] = data.split(',')
-  const mime = getMime(header)
+  const mime = await getMime(header, content)
   if (!acceptedMimes.includes(mime)) {
     res.status(400).send('Only font files are allowed for conversion!')
     return
@@ -16,8 +17,8 @@ module.exports = async (req, res) => {
   archiveFonts(res)
 }
 
-function getMime (header) {
-  return header.replace('data:', '').replace(';base64', '')
+async function getMime (header, content) {
+  return await FileType.fromBuffer(Buffer.from(content)) || header.replace('data:', '').replace(';base64', '')
 }
 
 function fontConverter (src, dest) {
@@ -33,8 +34,11 @@ function fontConverter (src, dest) {
   })
 }
 
-async function convertFont (header, content, cb) {
-  const ext = getMime(header).replace('font/', '')
+async function convertFont (header, content) {
+  let ext = (await getMime(header, content)).split('/').pop()
+  if (ext === 'svg+xml') {
+    ext = 'svg'
+  }
   const src = `font.${ext}`
   writeFileSync(src, content, 'base64')
   const formats = fontFormats.filter(format => format !== ext)
