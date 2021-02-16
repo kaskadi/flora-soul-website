@@ -5,4 +5,5 @@ block scripts
 
 block content
   a(href="/") Home
-  fs-file-browser(api-url="http://localhost:3110", web-socket-url="ws://localhost:3110")
+  - const port = '3110'
+  fs-file-browser(api-url="http://" + apiDomain + ":" + port, web-socket-url="ws://" + apiDomain + ":" + port)

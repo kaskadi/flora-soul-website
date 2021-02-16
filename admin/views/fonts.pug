@@ -5,4 +5,5 @@ block scripts
 
 block content
   a(href="/") Home
-  fs-font-converter(api-url="http://localhost:3120")
+  - const port = '3120'
+  fs-font-converter(api-url="http://" + apiDomain + ":" + port)
