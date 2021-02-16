@@ -5,5 +5,5 @@ kaskadi service uninstall -n flora-soul-admin
 cd services/images
 npm run uninstall:prod
 # uninstalling fonts API
-cd services/fonts
+cd ../fonts
 npm run uninstall:prod

@@ -8,7 +8,7 @@ npm i
 npm run install:prod
 npm run start:prod
 # starting fonts API
-cd services/fonts
+cd ../fonts
 npm i
 npm run install:prod
 npm run start:prod
