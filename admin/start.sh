@@ -6,9 +6,7 @@ kaskadi service install -n flora-soul-admin -e $PWD/index.js -r
 cd services/images
 npm i
 npm run install:prod
-npm run start:prod
 # starting fonts API
 cd ../fonts
 npm i
 npm run install:prod
-npm run start:prod

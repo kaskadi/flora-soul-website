@@ -5,10 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "echo \"Please use npm run install:prod and npm run start:prod to start the image API. This will require root privileges!\"",
+    "start": "echo \"Please use npm run install:prod to start the font API.\"",
     "install:prod": "kaskadi service install -n flora-soul-admin-font-api -e $PWD/index.js -r",
     "uninstall:prod": "kaskadi service uninstall -n flora-soul-admin-font-api",
-    "start:prod": "sudo systemctl restart flora-soul-admin-font-api",
     "start:dev": "nodemon index.js"
   },
   "keywords": [],
