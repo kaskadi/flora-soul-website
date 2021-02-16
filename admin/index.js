@@ -4,11 +4,10 @@ const app = express()
 const port = 3100
 
 const { existsSync } = require('fs')
-
-process.chdir(__dirname)
+const { join } = require('path')
 
 app.set('view engine', 'pug')
-app.use(express.static('views'))
+app.use(express.static(join(__dirname, 'views')))
 
 app.use(verify({ issuer: ['flora-soul.com'] }))
 
