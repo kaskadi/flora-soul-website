@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 
 app.get('/:view', (req, res) => {
   const { view } = req.params
-  if (!existsSync(`views/${view}.pug`)) {
+  if (!existsSync(join(__dirname, 'views', `${view}.pug`))) {
     res.status(404).send('This page does not exist')
   } else {
     res.render(view, {})
