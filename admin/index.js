@@ -5,6 +5,8 @@ const port = 3100
 
 const { existsSync } = require('fs')
 
+process.chdir(__dirname)
+
 app.set('view engine', 'pug')
 app.use(express.static('views'))
 

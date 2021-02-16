@@ -3,6 +3,8 @@ const app = express()
 const cors = require('cors')
 const port = 3120
 
+process.chdir(__dirname)
+
 app.use(express.json({ limit: '25mb', extended: false }))
 app.use(cors())
 
