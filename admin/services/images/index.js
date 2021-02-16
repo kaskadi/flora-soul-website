@@ -1,3 +1,4 @@
+const verify = require('express-kaskadi-verify')('http://localhost:9192')
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -11,6 +12,8 @@ require('dotenv').config({ path: join(__dirname, '.env') })
 
 app.use(express.json({ limit: '25mb', extended: false }))
 app.use(cors())
+
+app.use(verify({ issuer: ['flora-soul.com'], audience: ['api'] }))
 
 process.chdir(process.env.ROOT)
 
