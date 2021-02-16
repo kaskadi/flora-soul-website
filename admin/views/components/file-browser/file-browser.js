@@ -4,6 +4,7 @@ import join from './utils/join.js'
 import { uploadFiles } from './utils/api-utils.js'
 import { chop, add } from './utils/original-paths.js'
 import dispatchStatus from './utils/status-dispatcher.js'
+import { getKey, clearKey } from '../utils/cookies.js'
 import './file-list.js'
 import './browser-nav.js'
 import './browser-controls.js'
@@ -12,6 +13,9 @@ import './status-display.js'
 class FileBrowser extends KaskadiElement {
   constructor () {
     super()
+    const apiTokenName = 'API_KEY'
+    this._apiToken = getKey(apiTokenName)
+    clearKey(apiTokenName)
     this.selectedFile = null
     this.path = (new URL(window.location)).searchParams.get('path') || '' // check if a path was provided as query string, else load the root of the folder
     this.showOriginal = false
@@ -55,7 +59,7 @@ class FileBrowser extends KaskadiElement {
   }
 
   async navigate (path) {
-    const res = await fetch(`${this.apiUrl}?path=${path}`)
+    const res = await fetch(`${this.apiUrl}?path=${path}&token=${this._apiToken}`)
     const { status } = res
     dispatchStatus('loading...')
     if (status === 404) {
@@ -78,7 +82,7 @@ class FileBrowser extends KaskadiElement {
       this.path = filePath
     } else {
       dispatchStatus('downloading...')
-      window.open(`${this.apiUrl}/download?key=${filePath}`)
+      window.open(`${this.apiUrl}/download?key=${filePath}&token=${this._apiToken}`)
       dispatchStatus('ready', 1)
     }
   }
@@ -127,7 +131,7 @@ class FileBrowser extends KaskadiElement {
     e.preventDefault()
     this.dragCounter = 0
     const { apiUrl, path } = this
-    uploadFiles(e.dataTransfer.files, { apiUrl, path })
+    uploadFiles(e.dataTransfer.files, { apiUrl, path, apiToken: this._apiToken })
   }
 
   firstUpdated (changedProperties) {
@@ -229,7 +233,7 @@ class FileBrowser extends KaskadiElement {
             <div>Drop your files here!</div>
           </div>
         </div>
-        <fs-browser-controls .selectedFile="${this.selectedFile}" apiUrl="${this.apiUrl}" path="${this.path}" ?showOriginal="${this.showOriginal}" @show-original="${this.showOriginalHandler}"></fs-browser-controls>
+        <fs-browser-controls ._apiToken="${this._apiToken}" .selectedFile="${this.selectedFile}" apiUrl="${this.apiUrl}" path="${this.path}" ?showOriginal="${this.showOriginal}" @show-original="${this.showOriginalHandler}"></fs-browser-controls>
       </div>
       <fs-status></fs-status>
     `

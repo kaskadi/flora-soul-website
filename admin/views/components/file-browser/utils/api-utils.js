@@ -1,11 +1,12 @@
 import join from './join.js'
 import dispatchStatus from './status-dispatcher.js'
 
-export function getInit (method, body) {
+export function getInit (method, body, token) {
   return {
     method,
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      ...token && { Authorization: `Bearer ${token}` }
     },
     body: JSON.stringify(body)
   }
@@ -21,7 +22,7 @@ export function uploadFiles (files, opts, filePicker) {
     const loadHandler = async function (e) {
       const key = join(opts.path, file.name)
       const content = e.target.result
-      const res = await window.fetch(`${opts.apiUrl}/create`, getInit('POST', { key, content }))
+      const res = await window.fetch(`${opts.apiUrl}/create`, getInit('POST', { key, content }, opts.apiToken))
       fileIndex++
       if (res.status === 400) {
         window.alert(await res.text())

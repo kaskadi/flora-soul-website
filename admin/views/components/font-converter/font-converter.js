@@ -1,7 +1,15 @@
 /* eslint-env browser, mocha */
 import { KaskadiElement, css, html } from 'https://cdn.klimapartner.net/modules/@kaskadi/kaskadi-element/kaskadi-element.js'
+import { getKey, clearKey } from '../utils/cookies.js'
 
 class FontConverter extends KaskadiElement {
+  constructor () {
+    super()
+    const apiTokenName = 'API_KEY'
+    this._apiToken = getKey(apiTokenName)
+    clearKey(apiTokenName)
+  }
+
   static get properties () {
     return {
       apiUrl: {
@@ -20,7 +28,8 @@ class FontConverter extends KaskadiElement {
       const init = {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this._apiToken}`
         },
         body: JSON.stringify({ data })
       }
@@ -28,7 +37,7 @@ class FontConverter extends KaskadiElement {
       if (res.status === 400) {
         window.alert(await res.text())
       } else {
-        window.open(this.apiUrl)
+        window.open(`${this.apiUrl}?token=${this._apiToken}`)
       }
       if (filePicker) {
         filePicker.value = ''
