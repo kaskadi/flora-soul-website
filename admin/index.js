@@ -7,7 +7,9 @@ const { existsSync } = require('fs')
 const { join } = require('path')
 
 app.set('view engine', 'pug')
-app.use(express.static(join(__dirname, 'views')))
+const viewsPath = join(__dirname, 'views')
+app.set('views', viewsPath)
+app.use(express.static(viewsPath))
 
 app.use(verify({ issuer: ['flora-soul.com'] }))
 
