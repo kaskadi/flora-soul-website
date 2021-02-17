@@ -142,7 +142,7 @@ class FileBrowser extends KaskadiElement {
     dropbox.addEventListener('dragleave', this.dragleave.bind(this), false)
     dropbox.addEventListener('drop', this.drop.bind(this), false)
     // connect to WebSocket and update files when receiving new data. This needs to be here and not in the constructor because we need the data from this.wsUrl
-    this.ws = new WebSocket(`${this.wsUrl}`)
+    this.ws = new WebSocket(`${this.wsUrl}ws`)
     this.ws.addEventListener('message', function (e) {
       const { files, dir, publicUrl } = JSON.parse(e.data)
       if (this.path === dir) {
