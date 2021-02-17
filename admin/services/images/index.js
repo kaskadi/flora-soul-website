@@ -31,7 +31,7 @@ const server = app.listen(port, () => {
   console.log(`Images API running http://localhost:${port}`)
 })
 
-const wss = new WebSocket.Server({ server, path: '/ws' })
+const wss = new WebSocket.Server({ server })
 
 async function broadcast (req, res, next) {
   const { key } = res.locals
