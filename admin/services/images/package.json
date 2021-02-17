@@ -8,7 +8,7 @@
     "start": "echo \"Please use npm run install:prod to start the image API.\"",
     "install:prod": "kaskadi service install -n flora-soul-admin-img-api -u www-data -e $PWD/index.js -r",
     "uninstall:prod": "kaskadi service uninstall -n flora-soul-admin-img-api",
-    "start:dev": "nodemon index.js",
+    "start:dev": "export NODE_ENV=\"dev\" && nodemon index.js",
     "start:cdn": "nodemon static-server.js"
   },
   "keywords": [],

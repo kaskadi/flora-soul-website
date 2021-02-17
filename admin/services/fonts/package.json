@@ -8,7 +8,7 @@
     "start": "echo \"Please use npm run install:prod to start the font API.\"",
     "install:prod": "kaskadi service install -n flora-soul-admin-font-api -e $PWD/index.js -r",
     "uninstall:prod": "kaskadi service uninstall -n flora-soul-admin-font-api",
-    "start:dev": "nodemon index.js"
+    "start:dev": "export NODE_ENV=\"dev\" && nodemon index.js"
   },
   "keywords": [],
   "author": "Klimapartner GmbH <kontakt@klimapartner.de> (https://klimapartner.de)",

@@ -1,7 +1,6 @@
 const verify = require('express-kaskadi-verify')('http://localhost:9192')
 const express = require('express')
 const app = express()
-const cors = require('cors')
 const WebSocket = require('ws')
 const port = 3110
 
@@ -11,7 +10,12 @@ const { dirname, join } = require('path')
 require('dotenv').config({ path: join(__dirname, '.env') })
 
 app.use(express.json({ limit: '25mb', extended: false }))
-app.use(cors())
+
+// enable cors in dev environment
+if (process.env.NODE_ENV === 'dev') {
+  const cors = require('cors')
+  app.use(cors())
+}
 
 app.use(verify({ issuer: ['flora-soul.com'], audience: ['api'] }))
 
