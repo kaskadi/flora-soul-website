@@ -43,7 +43,7 @@ class BrowserControls extends KaskadiElement {
       return
     }
     const filePath = join(this.path, key)
-    this.callApi(`${this.apiUrl}/delete`, getInit('POST', { key: filePath }, this._apiToken), 'deleting...')
+    this.callApi(`${this.apiUrl}delete`, getInit('POST', { key: filePath }, this._apiToken), 'deleting...')
   }
 
   renameHandler () {
@@ -53,7 +53,7 @@ class BrowserControls extends KaskadiElement {
     }
     key = join(this.path, key)
     const oldKey = join(this.path, this.selectedFile.key)
-    this.callApi(`${this.apiUrl}/rename`, getInit('POST', { oldKey, key }, this._apiToken), 'renaming...')
+    this.callApi(`${this.apiUrl}rename`, getInit('POST', { oldKey, key }, this._apiToken), 'renaming...')
   }
 
   newFolderHandler () {
@@ -61,7 +61,7 @@ class BrowserControls extends KaskadiElement {
     if (!name) {
       return
     }
-    this.callApi(`${this.apiUrl}/create`, getInit('POST', { key: join(this.path, name) }, this._apiToken), 'creating...')
+    this.callApi(`${this.apiUrl}create`, getInit('POST', { key: join(this.path, name) }, this._apiToken), 'creating...')
   }
 
   showOriginalHandler (e) {

@@ -22,7 +22,7 @@ export function uploadFiles (files, opts, filePicker) {
     const loadHandler = async function (e) {
       const key = join(opts.path, file.name)
       const content = e.target.result
-      const res = await window.fetch(`${opts.apiUrl}/create`, getInit('POST', { key, content }, opts.apiToken))
+      const res = await window.fetch(`${opts.apiUrl}create`, getInit('POST', { key, content }, opts.apiToken))
       fileIndex++
       if (res.status === 400) {
         window.alert(await res.text())
