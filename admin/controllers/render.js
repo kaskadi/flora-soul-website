@@ -18,8 +18,9 @@ function getViewData (view) {
   const domain = isTest ? `localhost:${port}` : 'api.flora-soul.com'
   const path = isTest ? '' : prodPath
   const origin = `${domain}/${path}`
+  const getProtocol = (protocol) => `${protocol}${isTest ? '' : 's'}://`
   return {
-    apiUrl: `http://${origin}`,
-    ...hasWS && { wsApiUrl: `ws://${origin}` }
+    apiUrl: `${getProtocol('http')}${origin}`,
+    ...hasWS && { wsApiUrl: `${getProtocol('ws')}${origin}` }
   }
 }
