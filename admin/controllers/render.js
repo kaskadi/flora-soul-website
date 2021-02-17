@@ -17,7 +17,7 @@ function getViewData (view) {
   const isTest = process.env.NODE_ENV === 'dev'
   const domain = isTest ? `localhost:${port}` : 'api.flora-soul.com'
   const path = isTest ? '' : prodPath
-  const origin = `${domain}/${path}`
+  const origin = `${domain}/${path}/`
   const getProtocol = (protocol) => `${protocol}${isTest ? '' : 's'}://`
   return {
     apiUrl: `${getProtocol('http')}${origin}`,
