@@ -1,0 +1,18 @@
+{
+  "views": {
+    "images": {
+      "api": {
+        "port": "3110",
+        "prodPath": "images",
+        "hasWS": true
+      }
+    },
+    "fonts": {
+      "api": {
+        "port": "3120",
+        "prodPath": "fonts",
+        "hasWS": false
+      }
+    }
+  }
+}

@@ -5,5 +5,4 @@ block scripts
 
 block content
   a(href="/") Home
-  - const domain = `${isTest ? 'localhost:3120' : 'api.flora-soul.com'}/${isTest ? '' : 'images'}`
-  fs-font-converter(api-url="http://" + domain)
+  fs-font-converter(api-url=apiUrl)
