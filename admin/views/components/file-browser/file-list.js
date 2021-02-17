@@ -198,6 +198,7 @@ class FileList extends KaskadiElement {
       if (content === null) return 'static/folder.svg'
       const mime = content.split(';')[0].replace('data:', '')
       if (mime === 'application/pdf') return 'static/pdf.svg'
+      if (mime === 'application/octet-stream') return 'static/file.svg'
       return content
     }
     return html`
