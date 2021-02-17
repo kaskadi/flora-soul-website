@@ -5,5 +5,5 @@ block scripts
 
 block content
   a(href="/") Home
-  - const port = '3110'
-  fs-file-browser(api-url="http://" + apiDomain + ":" + port, web-socket-url="ws://" + apiDomain + ":" + port)
+  - const domain = `${isTest ? 'localhost:3110' : 'api.flora-soul.com'}/${isTest ? '' : 'images'}`
+  fs-file-browser(api-url="http://" + domain, web-socket-url="ws://" + domain)

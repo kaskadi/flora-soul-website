@@ -33,10 +33,8 @@ app.get('/:view', (req, res) => {
   if (view !== 'index') {
     res.cookie('API_KEY', process.env.API_TOKEN)
   }
-  const apiDomain = process.env.NODE_ENV === 'dev'
-    ? 'localhost'
-    : 'api.flora-soul.com'
-  res.render(view, { apiDomain })
+  const isTest = process.env.NODE_ENV === 'dev'
+  res.render(view, { isTest })
 })
 
 app.listen(port, () => {
