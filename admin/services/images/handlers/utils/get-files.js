@@ -44,6 +44,6 @@ function sortFiles (fileA, fileB) {
 }
 
 async function getContent (file) {
-  const { mime } = await FileType.fromFile(file)
+  const { mime } = await FileType.fromFile(file) || { mime: 'application/octet-stream' }
   return `data:${mime};base64,${readFileSync(file, 'base64')}`
 }
