@@ -22,6 +22,7 @@ class FontConverter extends KaskadiElement {
   uploadFont (files, filePicker) {
     if (files.length === 0) return
     const file = Array.from(files)[0]
+    const { name } = file
     const reader = new window.FileReader()
     const loadHandler = async function (e) {
       const data = e.target.result
@@ -31,7 +32,7 @@ class FontConverter extends KaskadiElement {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this._apiToken}`
         },
-        body: JSON.stringify({ data })
+        body: JSON.stringify({ name, data })
       }
       const res = await window.fetch(this.apiUrl, init)
       if (res.status === 400) {
@@ -85,8 +86,14 @@ class FontConverter extends KaskadiElement {
         flex-flow: column nowrap;
         justify-content: center;
         align-items: center;
+        padding-top: 5px;
+      }
+      #note div {
         font-style: italic;
         margin-top: 15px;
+      }
+      #note div:nth-of-type(2) {
+        color: red;
       }
     `
   }
@@ -98,8 +105,8 @@ class FontConverter extends KaskadiElement {
         <button @click="${this.uploadHandler}">Start converting!</button>
         <input id="file-picker" type="file" accept="font/*" @change="${this.filePickHandler}" hidden>
         <div id="note">
-          <div>Supports .ttf, .woff, .woff2, .svg</div>
           <div>Will download an archive (.zip) containing the original font in the following formats: .ttf, .woff, .woff2, .svg, .eot, .otf</div>
+          <div>Warning: does not support .eot as input format as of now!</div>
         </div>
       </div>
     `

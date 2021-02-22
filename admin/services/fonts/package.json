@@ -22,6 +22,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-kaskadi-verify": "^1.0.3",
+    "fast-xml-parser": "^3.18.0",
     "file-type": "^16.2.0",
     "font-converter": "^1.1.1",
     "kaskadi-cli": "^1.8.3"
