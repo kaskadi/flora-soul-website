@@ -21,7 +21,7 @@
     "express": "^4.17.1",
     "express-kaskadi-verify": "^1.0.3",
     "kaskadi-cli": "^1.8.3",
-    "pug": "^3.0.0"
+    "pug": "^3.0.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",
